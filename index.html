@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BF Technology · Cenová nabídka FVE</title>
+<link rel="icon" type="image/png" href="bft/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark:       #3C3C3C;   /* dark gray from BFT logo (TECHNOLOGY) */
+    --green:      #7CB342;   /* fresh green from BFT logo (BF) */
+    --yellow:     #F5A623;   /* yellow-orange from BFT logo (sun + panels) */
+    /* Backwards-compatible aliases used throughout */
+    --brand-dark: var(--dark);
+    --brand:      var(--green);
+    --accent:     var(--yellow);
+    --orange:     var(--yellow);   /* legacy alias kept for JS hover styles */
+    --text:       #4A4A4A;
+    --black:      #222222;
+    --cream:      #F5F8F0;   /* very light green-tinted gray */
+    --white:      #FFFFFF;
+    --grey-bg:    #E8E8E8;
+  }
+
+  *,*::before,*::after { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0;
+    font-family: 'Roboto', Arial, sans-serif;
+    font-size: 10pt;
+    color: var(--black);
+    background: #888;
+  }
+
+  /* ============= TOOLBAR (screen only) ============= */
+  .toolbar {
+    position: sticky; top: 0; z-index: 1000;
+    background: #2b2b2b; color: #fff;
+    padding: 10px 24px;
+    display: flex; gap: 12px; align-items: center;
+    font-size: 13px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.3);
+  }
+  .toolbar h3 { margin: 0; font-size: 14px; font-weight: 500; }
+  .toolbar .sep { flex: 1; }
+  .toolbar button {
+    background: var(--accent); color: #fff; border: 0;
+    padding: 8px 16px; border-radius: 4px; cursor: pointer;
+    font-size: 13px; font-weight: 500; font-family: inherit;
+  }
+  .toolbar button:hover { background: var(--brand-dark); }
+  .toolbar button.secondary { background: #555; }
+  .toolbar button.secondary:hover { background: #777; }
+  .toolbar .hint { color: #aaa; font-size: 12px; }
+
+  /* ============= PAGE FRAME ============= */
+  .page {
+    width: 29.7cm;
+    min-height: 21cm;
+    padding: 1.2cm 1.5cm;
+    margin: 20px auto;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+    position: relative;
+    page-break-after: always;
+    display: flex; flex-direction: column;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  /* ============= HEADERS ============= */
+  .top-header {
+    display: grid;
+    grid-template-columns: 6cm 1fr auto;
+    align-items: center;
+    gap: 1cm;
+    padding-bottom: 8px;
+    border-bottom: 4px solid var(--brand);
+  }
+  .top-header .logo { height: 1.9cm; }
+  .top-header .title {
+    text-align: right;
+    font-size: 18pt; font-weight: 700; color: var(--text);
+    line-height: 1.1;
+  }
+  .top-header .title .sub {
+    display: block; font-size: 9pt; font-weight: 400; font-style: italic;
+    color: var(--brand-dark); margin-top: 4px;
+  }
+  .top-header .meta {
+    font-size: 11pt;
+  }
+  .top-header .meta .lbl { font-weight: 700; color: var(--brand-dark); }
+  .top-header .meta .val { font-weight: 700; color: var(--text); }
+
+  /* Mini-header on pages 2–5 */
+  .mini-header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0.8cm;
+    padding-bottom: 6px;
+    border-bottom: 3px solid var(--brand);
+  }
+  .mini-header .logo { height: 1.3cm; }
+  .mini-header .right {
+    text-align: right;
+    font-size: 14pt; font-weight: 700; color: var(--text);
+  }
+  .mini-header .meta-line {
+    font-size: 9pt; font-weight: 400; margin-bottom: 2px;
+  }
+  .mini-header .meta-line .lbl { font-weight: 700; color: var(--brand-dark); }
+  .mini-header .meta-line .val { color: var(--text); font-weight: 700; }
+  .mini-header .meta-line .sep { color: var(--brand); margin: 0 8px; }
+
+  /* ============= COVER ============= */
+  .hero {
+    display: grid;
+    grid-template-columns: 10cm 1fr;
+    gap: 0;
+    margin-top: 12px;
+    border-radius: 4px;
+    overflow: hidden;
+    min-height: 8cm;
+  }
+  .hero-left {
+    background: var(--brand-dark);
+    color: var(--white);
+    padding: 0.6cm 0.8cm;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .hero-left h1 {
+    font-size: 24pt; font-weight: 900;
+    margin: 0; line-height: 1.05; color: var(--white);
+  }
+  .hero-left ul {
+    list-style: none; margin: 14px 0 0; padding: 0;
+  }
+  .hero-left li {
+    font-size: 10pt; padding: 2px 0 2px 16px; position: relative;
+  }
+  .hero-left li::before {
+    content: "●"; color: var(--accent); position: absolute; left: 0;
+    font-size: 10pt;
+  }
+  .hero-right {
+    background: var(--accent);
+    overflow: hidden;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-right img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .hero-placeholder {
+    color: rgba(255,255,255,0.85);
+    font-size: 12pt;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  /* Fillable fields panel */
+  .fields-panel {
+    margin-top: 18px;
+  }
+  .fields-panel .panel-caption {
+    font-size: 8pt; font-weight: 700; text-transform: uppercase;
+    color: var(--brand-dark); margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+  .fields-panel .panel-caption .hint {
+    color: var(--text); font-weight: 400; text-transform: none;
+    font-size: 8pt;
+  }
+  .fields-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .field {
+    background: var(--cream);
+    border-left: 5px solid var(--brand-dark);
+    padding: 8px 14px;
+    border-radius: 0 3px 3px 0;
+  }
+  .field label {
+    display: block;
+    font-size: 8pt; font-weight: 700; text-transform: uppercase;
+    color: var(--brand-dark); letter-spacing: 0.03em;
+    margin-bottom: 2px;
+  }
+  .field input {
+    width: 100%; border: 0; background: transparent;
+    font-family: inherit; font-size: 13pt; font-weight: 700;
+    color: var(--black); padding: 0;
+  }
+  .field input:focus {
+    outline: 2px solid var(--brand);
+    outline-offset: 4px;
+  }
+
+  /* Supplier strip */
+  .supplier {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: 1.05fr 1.1fr 0.9fr;
+    background: var(--brand-dark);
+    color: var(--white);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .supplier > div {
+    padding: 10px 16px;
+  }
+  .supplier .cap {
+    font-size: 8pt; font-weight: 700; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 4px; letter-spacing: 0.02em;
+  }
+  .supplier .name { font-size: 12pt; font-weight: 700; }
+  .supplier .line { font-size: 9pt; margin-top: 2px; }
+  .supplier .role { font-weight: 700; color: var(--accent); font-size: 9pt; }
+
+  /* ============= BANNER ============= */
+  .banner {
+    display: grid;
+    grid-template-columns: 18cm 1fr;
+    height: 1cm;
+    margin-top: 18px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .banner .left {
+    background: var(--brand-dark);
+    color: var(--white);
+    display: flex; align-items: center;
+    padding-left: 0.6cm;
+    font-size: 13pt; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .banner .right { background: var(--accent); }
+
+  /* ============= PRODUCT CARDS (page 2) ============= */
+  .cards {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+  }
+  .card {
+    background: var(--cream);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .card .card-hdr {
+    background: var(--brand-dark);
+    color: var(--white);
+    text-align: center;
+    font-size: 10pt; font-weight: 700; text-transform: uppercase;
+    padding: 6px;
+    letter-spacing: 0.04em;
+  }
+  .card .brand-name {
+    text-align: center;
+    padding: 8px 6px 0;
+    font-size: 12pt; font-weight: 700;
+    color: var(--black);
+  }
+  .card .brand-model {
+    text-align: center;
+    padding: 0 6px 8px;
+    font-size: 9pt; font-style: italic;
+    color: var(--text);
+    border-bottom: 2px solid var(--brand);
+    margin: 0 14px;
+  }
+  .card dl {
+    margin: 8px 0 12px; padding: 0;
+    text-align: center;
+  }
+  .card dt {
+    font-size: 8pt; color: var(--text);
+    margin-top: 6px;
+  }
+  .card dd {
+    font-size: 10pt; font-weight: 700; color: var(--brand-dark);
+    margin: 0;
+  }
+
+  /* ============= ITEMS TABLE ============= */
+  table.items {
+    width: 100%;
+    margin-top: 14px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 10pt;
+  }
+  table.items thead th {
+    background: var(--brand-dark);
+    color: var(--white);
+    padding: 10px 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 9pt;
+    letter-spacing: 0.02em;
+  }
+  table.items thead th.qty   { width: 11%; text-align: center; }
+  table.items thead th.desc  { text-align: left; }
+  table.items thead th.price { width: 18%; text-align: right; }
+  table.items tbody td {
+    padding: 7px 14px;
+    border-bottom: 1px solid #fff;
+  }
+  table.items tbody tr:nth-child(odd) td { background: var(--cream); }
+  table.items tbody tr:nth-child(even) td { background: var(--white); }
+  table.items tbody td.qty {
+    text-align: center; color: var(--brand-dark); font-weight: 700;
+  }
+  table.items tbody td.price { text-align: right; }
+  table.items tfoot td {
+    padding: 9px 14px;
+    border: 0;
+  }
+  table.items tfoot tr.subtotal td {
+    background: var(--grey-bg);
+    text-align: right;
+    font-weight: 700;
+    color: var(--text);
+  }
+  table.items tfoot tr.total td {
+    background: var(--accent);
+    text-align: right;
+    font-weight: 700;
+    color: var(--black);
+    font-size: 12pt;
+  }
+  table.items tfoot td.lbl,
+  table.items tfoot td:first-child {
+    text-align: right;
+  }
+
+  /* Scope bullets (2 columns) */
+  .scope {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 30px;
+    row-gap: 6px;
+  }
+  .scope div {
+    font-size: 10pt;
+    padding-left: 16px;
+    position: relative;
+  }
+  .scope div::before {
+    content: "●"; color: var(--brand); position: absolute; left: 0;
+  }
+
+  /* Payment cards */
+  .pay-cards {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .pay-card { background: var(--cream); border-radius: 4px; overflow: hidden; }
+  .pay-card .top {
+    background: var(--brand-dark);
+    color: var(--white);
+    padding: 10px 14px;
+    text-align: center;
+  }
+  .pay-card .top .roman {
+    color: var(--accent); font-weight: 700; font-size: 11pt;
+  }
+  .pay-card .top .pct {
+    font-size: 18pt; font-weight: 900; margin-left: 8px;
+  }
+  .pay-card .body {
+    padding: 12px 16px;
+    font-size: 10pt;
+    color: var(--text);
+  }
+
+  /* Steps */
+  .steps {
+    margin-top: 14px;
+    background: var(--cream);
+    border-radius: 4px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: 0;
+  }
+  .step {
+    padding: 14px 16px;
+    border-right: 1px dashed #c8c8c8;
+    position: relative;
+  }
+  .step:last-child { border-right: 0; }
+  .del-step {
+    position: absolute; top: 4px; right: 4px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(60,60,60,0.25); color: #fff; border: 0;
+    cursor: pointer; font-size: 11px; line-height: 1;
+    font-family: inherit; font-weight: 700;
+    opacity: 0; transition: opacity .15s;
+    z-index: 5;
+  }
+  .step:hover .del-step { opacity: 1; }
+  .del-step:hover { background: var(--orange); }
+  .step .num {
+    font-size: 24pt; font-weight: 900; color: var(--brand-dark);
+    line-height: 1;
+  }
+  .step .dur {
+    font-size: 9pt; font-weight: 700; color: var(--brand-dark);
+    margin-left: 10px;
+  }
+  .step h4 {
+    font-size: 10pt; margin: 8px 0 4px; color: var(--black);
+  }
+  .step p {
+    font-size: 9pt; margin: 0; color: var(--text);
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: 1.05fr 1.1fr 0.9fr;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #eee;
+  }
+  .footer > div { padding: 16px 22px; }
+  .footer .logo-cell {
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 8px;
+  }
+  .footer .logo-cell img { height: 1.8cm; }
+  .footer .logo-cell span { color: var(--dark); font-weight: 700; font-size: 11pt; }
+  .footer .contacts {
+    background: var(--brand);
+    color: var(--white);
+  }
+  .footer .contacts div {
+    padding: 4px 0;
+    font-size: 11pt;
+    font-weight: 700;
+    display: flex; align-items: baseline; gap: 14px;
+  }
+  .footer .contacts span.lbl {
+    display: inline-block;
+    width: 42px;
+    font-size: 8pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    opacity: 0.85;
+  }
+  .footer .contacts .socials {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    margin-top: 4px;
+    font-size: 9.5pt;
+    gap: 8px;
+  }
+  .footer .contacts .socials .lbl {
+    width: 42px;
+  }
+  .footer .contacts .socials a {
+    color: var(--white);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    font-weight: 700;
+  }
+  .footer .contacts .socials a:hover {
+    border-bottom-color: var(--white);
+  }
+  .footer .contacts .socials .dot { opacity: 0.6; }
+  .footer .address { background: var(--accent); color: var(--black); }
+  .footer .address .cap {
+    font-size: 8pt; font-weight: 700; text-transform: uppercase;
+    color: var(--white); margin-bottom: 4px;
+  }
+  .footer .address div { font-size: 10pt; padding: 1px 0; }
+  .footer .address .name { font-size: 11pt; font-weight: 700; }
+
+  /* Editable cells */
+  [contenteditable="true"] {
+    outline: none;
+  }
+  [contenteditable="true"]:focus {
+    background: #f3faea !important;
+    box-shadow: inset 0 0 0 2px var(--brand);
+    color: var(--black) !important;
+    -webkit-text-fill-color: var(--black) !important;
+  }
+  [contenteditable="true"]:hover:not(:focus) {
+    box-shadow: inset 0 0 0 1px rgba(124,179,66,.3);
+  }
+
+  /* ============= TITLE PAGE (page 0) ============= */
+  .title-page {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+    color: #fff;
+  }
+  .title-page .photo-slot {
+    position: absolute; inset: 0;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .title-page .photo-slot img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .title-page .gradient-overlay {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(135deg,
+        rgba(60, 60, 60, 0.92) 0%,
+        rgba(60, 60, 60, 0.72) 40%,
+        rgba(245, 166, 35, 0.78) 100%);
+    pointer-events: none;
+  }
+  .title-page .content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex; flex-direction: column;
+    padding: 2.2cm 2.5cm;
+    pointer-events: none;
+  }
+  .title-page .content > * { pointer-events: auto; }
+  .title-page .top-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 3.5cm;
+  }
+  .title-page .middle { flex: 0 0 auto; }
+  .title-page .bottom-block { margin-top: auto; display: flex; flex-direction: column; gap: 24px; }
+  .title-page .top-row .logo-white {
+    height: 3.2cm;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.35));
+  }
+  .title-page .top-row .corner {
+    text-align: right;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+  .title-page .corner .badge {
+    display: block;
+    font-size: 14pt;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+  }
+  .title-page h1 {
+    font-size: 54pt;
+    font-weight: 900;
+    line-height: 1;
+    margin: 0;
+  }
+  .title-page h1 .sub {
+    display: block;
+    font-size: 22pt;
+    font-weight: 400;
+    margin-top: 14px;
+    opacity: 0.95;
+  }
+  .title-page .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.35);
+  }
+  .title-page .meta-grid > div .lbl {
+    font-size: 8pt; text-transform: uppercase; letter-spacing: 0.2em;
+    opacity: 0.9; display: block; margin-bottom: 6px; font-weight: 500;
+  }
+  .title-page .meta-grid > div .val {
+    font-size: 18pt; font-weight: 700; line-height: 1.1;
+  }
+  .title-page .bottom-row {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    font-size: 10pt;
+  }
+  .title-page .bottom-row .left b { font-weight: 700; }
+  .title-page .upload-hint {
+    position: absolute; bottom: 12px; right: 12px; z-index: 3;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    pointer-events: none;
+    opacity: 0; transition: opacity .2s;
+  }
+  .title-page .photo-slot:hover ~ .upload-hint,
+  .title-page:hover .upload-hint { opacity: 1; }
+
+  /* ============= PRODUCT CARD IMAGE AREA ============= */
+  .card .product-photo {
+    margin-top: auto;
+    border-top: 1px solid rgba(60,60,60,0.15);
+    padding: 8px;
+    cursor: pointer;
+    background: #fff;
+    height: 4.5cm;            /* FIXED — neskáče, ať je fotka jakákoliv */
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    color: #bbb;
+    font-size: 9pt;
+    font-style: italic;
+    transition: background .15s;
+  }
+  .card .product-photo:hover { background: #f7fbef; color: var(--brand); }
+  .card .product-photo img {
+    width: 100%; height: 100%;
+    object-fit: contain;       /* zachová poměr stran v pevném boxu */
+    display: block;
+  }
+  .card .product-photo input[type="file"] { display: none; }
+  .card .product-photo .placeholder { display: block; }
+
+  /* ============= EDITING UI: add/remove row + remove card ============= */
+  table.items tbody tr { position: relative; }
+  .del-row {
+    position: absolute;
+    right: -28px; top: 50%; transform: translateY(-50%);
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--orange); color: #fff; border: 0;
+    cursor: pointer; font-size: 13px; line-height: 1;
+    font-family: inherit; font-weight: 700;
+    opacity: 0; transition: opacity .15s;
+    z-index: 5;
+  }
+  table.items tbody tr:hover .del-row { opacity: 1; }
+  .add-row {
+    display: block; margin: 10px auto 0;
+    background: var(--orange); color: #fff;
+    border: 0; padding: 7px 18px; border-radius: 4px;
+    font-family: inherit; font-size: 10pt; font-weight: 500;
+    cursor: pointer;
+  }
+  .add-row:hover { background: var(--dark); }
+  .pay-card { position: relative; }
+  .del-card {
+    position: absolute; top: 6px; right: 6px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(255,255,255,0.25); color: #fff; border: 0;
+    cursor: pointer; font-size: 11px; line-height: 1;
+    font-family: inherit; font-weight: 700;
+    opacity: 0; transition: opacity .15s;
+    z-index: 5;
+  }
+  .pay-card:hover .del-card { opacity: 1; }
+  .del-card:hover { background: var(--orange); }
+  /* Auto-grid for any number of pay cards (1, 2, 3, or 4) */
+  .pay-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  /* Cover hero photo slot — clickable to swap */
+  .hero-right.photo-slot {
+    cursor: pointer; position: relative;
+  }
+  .hero-right.photo-slot::after {
+    content: "klikni pro výměnu fotky";
+    position: absolute; bottom: 6px; right: 8px;
+    background: rgba(0,0,0,0.55);
+    color: #fff; font-size: 9px;
+    padding: 3px 8px; border-radius: 10px;
+    opacity: 0; transition: opacity .15s;
+    pointer-events: none;
+  }
+  .hero-right.photo-slot:hover::after { opacity: 1; }
+  .hero-right.photo-slot input[type="file"] { display: none; }
+
+  /* ============= PRINT ============= */
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+  @media print {
+    html, body { background: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .toolbar, .no-print, .upload-hint { display: none !important; }
+    .page {
+      margin: 0;
+      box-shadow: none;
+      width: 29.7cm;
+      min-height: 21cm;
+      height: 21cm;
+      padding: 1.2cm 1.5cm;
+    }
+    .title-page { padding: 0 !important; }
+    .hero-right.photo-slot::after,
+    .card .product-photo:empty,
+    .card .product-photo:hover { background: transparent !important; }
+    [contenteditable="true"]:hover,
+    [contenteditable="true"]:focus,
+    .field input:focus { box-shadow: none !important; background: transparent !important; outline: 0 !important; }
+    .field input { color: var(--black) !important; }
+    /* Strip the cream box + orange border from cover fields when printing */
+    .field {
+      background: transparent !important;
+      border: 0 !important;
+      border-left: 0 !important;
+      padding: 4px 0 !important;
+      border-bottom: 1px solid #ddd !important;
+    }
+    .field label { color: var(--brand-dark) !important; }
+    /* Empty product photo placeholders hidden in print (the "+ foto panelu" hints) */
+    .card .product-photo:not(:has(img)) { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- =========================== TOOLBAR =========================== -->
+<div class="toolbar no-print">
+  <h3>BF Technology · Cenová nabídka FVE</h3>
+  <span class="hint">Vyplň pole nahoře, hodnoty se propíší do záhlaví všech stran.</span>
+  <span class="sep"></span>
+  <button onclick="window.print()">🖨️ Export do PDF</button>
+  <button class="secondary" onclick="resetAll()">↺ Reset</button>
+</div>
+
+<!-- =========================== PAGE 0 — TITLE PAGE =========================== -->
+<section class="page title-page">
+  <div class="photo-slot" data-photo="title">
+    <img src="assets/title-photo.jpg" alt="Titulní fotka">
+    <input type="file" accept="image/*">
+  </div>
+  <div class="gradient-overlay"></div>
+  <div class="content">
+    <div class="top-row">
+      <img class="logo-white" src="bft/BFT_LOGO_WHITE.png" alt="BF Technology">
+      <div class="corner">
+        Kalkulační list FVE
+        <div class="badge">Kalkulace č. · <span data-field="cislo">932621</span></div>
+      </div>
+    </div>
+    <div class="middle">
+      <h1>
+        Fotovoltaika<br>na míru
+        <span class="sub">Návrh řešení a kompletní cenová kalkulace</span>
+      </h1>
+    </div>
+    <div class="bottom-block">
+      <div class="meta-grid">
+        <div>
+          <span class="lbl">Objekt / lokalita</span>
+          <span class="val" data-field="objekt">Varnsdorf</span>
+        </div>
+        <div>
+          <span class="lbl">Výkon FVE</span>
+          <span class="val" data-field="vykon">9,9 kWp</span>
+        </div>
+        <div>
+          <span class="lbl">Odběratel</span>
+          <span class="val" data-field="odberatel">[Jméno odběratele]</span>
+        </div>
+      </div>
+      <div class="bottom-row">
+        <div class="left"><b>BF Technology s. r. o.</b> &nbsp;·&nbsp; info@bftechnology.cz &nbsp;·&nbsp; www.bftechnology.cz</div>
+        <div class="right">Vystaveno <b data-field="datum">9. 3. 2026</b> &nbsp;·&nbsp; Platnost do <b data-field="platnost">23. 3. 2026</b></div>
+      </div>
+    </div>
+  </div>
+  <div class="upload-hint">📷 Klikni na fotku pro výměnu</div>
+</section>
+
+<!-- =========================== PAGE 1 — COVER =========================== -->
+<section class="page">
+  <div class="top-header">
+    <img class="logo" src="bft/BFT_LOGO_OREZ.png" alt="BF Technology">
+    <div class="meta">
+      <span class="lbl">Kalkulace č.: </span>
+      <span class="val" data-field="cislo">932621</span>
+    </div>
+    <div class="title">
+      KALKULAČNÍ LIST FVE
+      <span class="sub">Návrh řešení a kompletní cenová kalkulace</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-left">
+      <h1>Fotovoltaické<br>elektrárny na klíč</h1>
+      <ul>
+        <li>Instalace na všechny typy střech a krytin</li>
+        <li>Moderní design a vysoká účinnost</li>
+        <li>Certifikované komponenty se zárukou</li>
+        <li>Montáž certifikovanými odborníky</li>
+      </ul>
+    </div>
+    <div class="hero-right photo-slot" data-photo="hero">
+      <span class="placeholder hero-placeholder">+ Klikni pro nahrání fotky</span>
+      <input type="file" accept="image/*">
+    </div>
+  </div>
+
+  <div class="fields-panel">
+    <div class="panel-caption">
+      ÚDAJE NABÍDKY <span class="hint">— vyplňte níže, hodnoty se automaticky propíší do záhlaví všech stran</span>
+    </div>
+    <div class="fields-grid">
+      <div class="field">
+        <label>Kalkulace č.</label>
+        <input type="text" data-field="cislo" value="932621">
+      </div>
+      <div class="field">
+        <label>Výkon FVE</label>
+        <input type="text" data-field="vykon" value="9,9 kWp">
+      </div>
+      <div class="field">
+        <label>Objekt / lokalita</label>
+        <input type="text" data-field="objekt" value="Varnsdorf">
+      </div>
+      <div class="field">
+        <label>Odběratel</label>
+        <input type="text" data-field="odberatel" value="[Jméno / firma odběratele]">
+      </div>
+      <div class="field">
+        <label>Datum vystavení</label>
+        <input type="text" data-field="datum" value="9. 3. 2026">
+      </div>
+      <div class="field">
+        <label>Platnost nabídky do</label>
+        <input type="text" data-field="platnost" value="23. 3. 2026">
+      </div>
+    </div>
+  </div>
+
+  <div class="supplier" data-save="supplier">
+    <div>
+      <div class="cap">Dodavatel</div>
+      <div class="name" contenteditable="true">BF Technology s. r. o.</div>
+      <div class="line" contenteditable="true">IČO —</div>
+      <div class="line" contenteditable="true">[sídlo společnosti]</div>
+    </div>
+    <div>
+      <div class="cap">Kontakty</div>
+      <div class="line"><span class="role">Smluvní:</span> <span contenteditable="true">PhDr. Jan Böhme</span></div>
+      <div class="line" contenteditable="true">+420 776 111 100 · info@bftechnology.cz</div>
+      <div class="line" style="margin-top:6px"><span class="role">Technický:</span> <span contenteditable="true">[technický kontakt]</span></div>
+      <div class="line" contenteditable="true">servis@bftechnology.cz</div>
+    </div>
+    <div>
+      <div class="cap">Zpracoval</div>
+      <div class="name" contenteditable="true">PhDr. Jan Böhme</div>
+      <div class="line" contenteditable="true">obchodní ředitel</div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== PAGE 2 — POUŽITÉ TECHNOLOGIE =========================== -->
+<section class="page">
+  <div class="mini-header">
+    <img class="logo" src="bft/BFT_LOGO_OREZ.png" alt="BF Technology">
+    <div class="right">
+      <div class="meta-line">
+        <span class="lbl">Kalkulace č.:</span> <span class="val" data-field="cislo">932621</span>
+        <span class="sep">·</span>
+        <span class="lbl">Výkon:</span> <span class="val" data-field="vykon">9,9 kWp</span>
+        <span class="sep">·</span>
+        <span class="lbl">Objekt:</span> <span class="val" data-field="objekt">Varnsdorf</span>
+      </div>
+      POUŽITÉ TECHNOLOGIE
+    </div>
+  </div>
+
+  <div class="banner"><div class="left">Použité technologie</div><div class="right"></div></div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-hdr">FV panely</div>
+      <div class="brand-name" contenteditable="true">Trina Solar</div>
+      <div class="brand-model" contenteditable="true">450 TOPCon</div>
+      <dl>
+        <dt>Počet kusů</dt><dd contenteditable="true">22 ks</dd>
+        <dt>Typ článku</dt><dd contenteditable="true">Mono</dd>
+        <dt>Rozměry</dt><dd contenteditable="true">1762 × 1134 × 30 mm</dd>
+        <dt>Záruka výkon</dt><dd contenteditable="true">25 let</dd>
+        <dt>Záruka produkt</dt><dd contenteditable="true">12 let</dd>
+      </dl>
+      <div class="product-photo photo-slot" data-photo="prod-1">
+        <span class="placeholder">+ foto panelu</span>
+        <input type="file" accept="image/*">
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">Střídač</div>
+      <div class="brand-name" contenteditable="true">Solinteg</div>
+      <div class="brand-model" contenteditable="true">MHT-10K-25</div>
+      <dl>
+        <dt>Počet kusů</dt><dd contenteditable="true">1 ks</dd>
+        <dt>Max. výstupní výkon</dt><dd contenteditable="true">10 000 W</dd>
+        <dt>Účinnost</dt><dd contenteditable="true">až 97,5 %</dd>
+        <dt>Čas přepnutí backup</dt><dd contenteditable="true">&lt; 10 ms</dd>
+        <dt>Záruka produkt</dt><dd contenteditable="true">5 let</dd>
+      </dl>
+      <div class="product-photo photo-slot" data-photo="prod-2">
+        <span class="placeholder">+ foto střídače</span>
+        <input type="file" accept="image/*">
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">Baterie</div>
+      <div class="brand-name" contenteditable="true">Dyness Tower</div>
+      <div class="brand-model" contenteditable="true">T10 · 10 kWh</div>
+      <dl>
+        <dt>Technologie</dt><dd contenteditable="true">LiFePO4</dd>
+        <dt>Kapacita</dt><dd contenteditable="true">10,6 – 21 kWh</dd>
+        <dt>Vlastní spotřeba</dt><dd contenteditable="true">&lt; 15 W</dd>
+        <dt>Záruka produkt</dt><dd contenteditable="true">10 let</dd>
+        <dt>&nbsp;</dt><dd>&nbsp;</dd>
+      </dl>
+      <div class="product-photo photo-slot" data-photo="prod-3">
+        <span class="placeholder">+ foto baterie</span>
+        <input type="file" accept="image/*">
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">Wallbox</div>
+      <div class="brand-name" contenteditable="true">Solinteg</div>
+      <div class="brand-model" contenteditable="true">S11K-BS0</div>
+      <dl>
+        <dt>Dobíjecí výkon</dt><dd contenteditable="true">11 kW</dd>
+        <dt>Provedení</dt><dd contenteditable="true">3 fáze</dd>
+        <dt>Funkce</dt><dd contenteditable="true">Power Boost</dd>
+        <dt>Vzdálený přístup</dt><dd contenteditable="true">ano</dd>
+        <dt>Záruka produkt</dt><dd contenteditable="true">5 let</dd>
+      </dl>
+      <div class="product-photo photo-slot" data-photo="prod-4">
+        <span class="placeholder">+ foto wallboxu</span>
+        <input type="file" accept="image/*">
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hdr">Konstrukce</div>
+      <div class="brand-name" contenteditable="true">Střešní hák</div>
+      <div class="brand-model" contenteditable="true">hliník / nerez ocel</div>
+      <dl>
+        <dt>Orientace</dt><dd contenteditable="true">libovolná</dd>
+        <dt>Materiál</dt><dd contenteditable="true">hliník, nerez</dd>
+        <dt>Vhodné pro</dt><dd contenteditable="true">šikmé střechy</dd>
+        <dt>Záruka</dt><dd contenteditable="true">10 let</dd>
+        <dt>&nbsp;</dt><dd>&nbsp;</dd>
+      </dl>
+      <div class="product-photo photo-slot" data-photo="prod-5">
+        <span class="placeholder">+ foto konstrukce</span>
+        <input type="file" accept="image/*">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== PAGE 3 — CENOVÁ KALKULACE =========================== -->
+<section class="page">
+  <div class="mini-header">
+    <img class="logo" src="bft/BFT_LOGO_OREZ.png" alt="BF Technology">
+    <div class="right">
+      <div class="meta-line">
+        <span class="lbl">Kalkulace č.:</span> <span class="val" data-field="cislo">932621</span>
+        <span class="sep">·</span>
+        <span class="lbl">Výkon:</span> <span class="val" data-field="vykon">9,9 kWp</span>
+        <span class="sep">·</span>
+        <span class="lbl">Objekt:</span> <span class="val" data-field="objekt">Varnsdorf</span>
+      </div>
+      KALKULAČNÍ LIST FVE
+    </div>
+  </div>
+
+  <div class="banner"><div class="left">Cenová kalkulace — technologie FVE</div><div class="right"></div></div>
+
+  <table class="items" id="main-items" data-table="main">
+    <thead>
+      <tr>
+        <th class="qty">Počet ks</th>
+        <th class="desc">Popis položky</th>
+        <th class="price">Cena</th>
+      </tr>
+    </thead>
+    <tbody data-save="items-main">
+      <tr><td class="qty" contenteditable="true">22</td> <td contenteditable="true">Trina Solar 450 TOPCon – fotovoltaické panely</td><td class="price" contenteditable="true">—</td></tr>
+      <tr><td class="qty" contenteditable="true">1</td>  <td contenteditable="true">Solinteg MHT-10K-25 – hybridní střídač 10 kW</td><td class="price" contenteditable="true">—</td></tr>
+      <tr><td class="qty" contenteditable="true">1</td>  <td contenteditable="true">Dyness Tower T10 – bateriové úložiště 10 kWh (LiFePO4)</td><td class="price" contenteditable="true">—</td></tr>
+      <tr><td class="qty" contenteditable="true">1</td>  <td contenteditable="true">Solinteg S11K-BS0 – wallbox 11 kW (Power Boost)</td><td class="price" contenteditable="true">—</td></tr>
+      <tr><td class="qty" contenteditable="true">1</td>  <td contenteditable="true">Konstrukce FVE – střešní hák (hliník / nerez)</td><td class="price" contenteditable="true">—</td></tr>
+      <tr><td class="qty" contenteditable="true">1</td>  <td contenteditable="true">Profily, jističe, rozvaděče AC / DC / ER, ochranné prvky</td><td class="price" contenteditable="true">—</td></tr>
+      <tr><td class="qty" contenteditable="true">1</td>  <td contenteditable="true">Kabeláž, spojovací materiál, trubky, žlaby</td><td class="price" contenteditable="true">—</td></tr>
+      <tr><td class="qty" contenteditable="true">1</td>  <td contenteditable="true">Práce, montáž, doprava a uvedení do provozu</td><td class="price" contenteditable="true">—</td></tr>
+    </tbody>
+    <tfoot>
+      <tr class="subtotal"><td colspan="2">Celkem bez DPH</td><td contenteditable="true">333 107 Kč</td></tr>
+      <tr class="total"><td colspan="2">Celkem s 12 % DPH</td><td contenteditable="true">373 080 Kč</td></tr>
+    </tfoot>
+  </table>
+</section>
+
+<!-- =========================== PAGE 4 — VOLITELNÉ + ROZSAH =========================== -->
+<section class="page">
+  <div class="mini-header">
+    <img class="logo" src="bft/BFT_LOGO_OREZ.png" alt="BF Technology">
+    <div class="right">
+      <div class="meta-line">
+        <span class="lbl">Kalkulace č.:</span> <span class="val" data-field="cislo">932621</span>
+        <span class="sep">·</span>
+        <span class="lbl">Výkon:</span> <span class="val" data-field="vykon">9,9 kWp</span>
+        <span class="sep">·</span>
+        <span class="lbl">Objekt:</span> <span class="val" data-field="objekt">Varnsdorf</span>
+      </div>
+      KALKULAČNÍ LIST FVE
+    </div>
+  </div>
+
+  <div class="banner"><div class="left">Souhrn nákladů, dotace a sleva</div><div class="right"></div></div>
+
+  <table class="items" data-table="opt">
+    <thead>
+      <tr>
+        <th class="qty">Počet ks</th>
+        <th class="desc">Popis položky</th>
+        <th class="price">Cena vč. DPH</th>
+      </tr>
+    </thead>
+    <tbody data-save="items-opt">
+      <tr><td class="qty" contenteditable="true">1</td><td contenteditable="true">Technologie FVE — panely, střídač, baterie, wallbox</td><td class="price" contenteditable="true">209 000 Kč</td></tr>
+      <tr><td class="qty" contenteditable="true">1</td><td contenteditable="true">Konstrukce a elektromateriál — profily, jističe, rozvaděče AC / DC / ER, ochranné prvky</td><td class="price" contenteditable="true">98 000 Kč</td></tr>
+      <tr><td class="qty" contenteditable="true">1</td><td contenteditable="true">Práce, montáž a doprava</td><td class="price" contenteditable="true">66 080 Kč</td></tr>
+      <tr><td class="qty" contenteditable="true">1</td><td contenteditable="true">Dotace Nová zelená úsporám (po vyřízení žádosti)</td><td class="price" contenteditable="true">0 Kč</td></tr>
+      <tr><td class="qty" contenteditable="true">1</td><td contenteditable="true">Poskytnutá sleva</td><td class="price" contenteditable="true">− 5 000 Kč</td></tr>
+    </tbody>
+    <tfoot>
+      <tr class="subtotal"><td colspan="2">Celková fakturační cena FVE</td><td contenteditable="true">373 080 Kč</td></tr>
+      <tr class="total"><td colspan="2">Celková cena po odečtení dotace a slevy</td><td contenteditable="true">368 080 Kč</td></tr>
+    </tfoot>
+  </table>
+
+  <div class="banner"><div class="left">Rozsah prací</div><div class="right"></div></div>
+  <div class="scope">
+    <div contenteditable="true">Projektová dokumentace úrovně DPS a DSP</div>
+    <div contenteditable="true">Zpracování a podání žádosti o dotaci NZÚ (SFŽP)</div>
+    <div contenteditable="true">Vyřízení připojení k distribuční síti</div>
+    <div contenteditable="true">Elektrorevize odběrného místa, FVE a elektromobility</div>
+    <div contenteditable="true">Doplnění povinných prvků v elektroměrovém rozvaděči</div>
+    <div contenteditable="true">Doplnění domovního rozvaděče pro funkci backup módu</div>
+    <div contenteditable="true">Osazení DC přepěťové ochrany pro každý string</div>
+    <div contenteditable="true">Osazení 1× AC FVE rozvaděče 72 modulů (BACKUP / GRID)</div>
+    <div contenteditable="true">Montáž FVE panelů a konstrukce</div>
+    <div contenteditable="true">Montáž a zprovoznění střídače a baterií</div>
+    <div contenteditable="true">Montáž a zprovoznění wallboxu (Power Boost, chytré měření)</div>
+    <div contenteditable="true">STOP tlačítko pro bezpečné vypnutí panelů (Tigo)</div>
+    <div contenteditable="true">Vytvoření přístupů do Cloud služeb</div>
+    <div contenteditable="true">Zajištěná technická podpora a servis</div>
+  </div>
+</section>
+
+<!-- =========================== PAGE 5 — PLATEBNÍ + SPOLUPRÁCE + FOOTER =========================== -->
+<section class="page">
+  <div class="mini-header">
+    <img class="logo" src="bft/BFT_LOGO_OREZ.png" alt="BF Technology">
+    <div class="right">
+      <div class="meta-line">
+        <span class="lbl">Kalkulace č.:</span> <span class="val" data-field="cislo">932621</span>
+        <span class="sep">·</span>
+        <span class="lbl">Výkon:</span> <span class="val" data-field="vykon">9,9 kWp</span>
+        <span class="sep">·</span>
+        <span class="lbl">Objekt:</span> <span class="val" data-field="objekt">Varnsdorf</span>
+      </div>
+      KALKULAČNÍ LIST FVE
+    </div>
+  </div>
+
+  <div class="banner"><div class="left">Platební podmínky</div><div class="right"></div></div>
+  <div class="pay-cards" data-save="pay-cards">
+    <div class="pay-card">
+      <button class="del-card no-print" title="Odebrat kartu">✕</button>
+      <div class="top"><span class="roman" contenteditable="true">I.</span> · <span class="pct" contenteditable="true">20 %</span></div>
+      <div class="body" contenteditable="true">Po podpisu smlouvy bude uhrazena 1. záloha 20 % z celkové ceny díla.</div>
+    </div>
+    <div class="pay-card">
+      <button class="del-card no-print" title="Odebrat kartu">✕</button>
+      <div class="top"><span class="roman" contenteditable="true">II.</span> · <span class="pct" contenteditable="true">70 %</span></div>
+      <div class="body" contenteditable="true">Po montáži FVE panelů a zprovoznění elektrárny (oživení střídače s omezením přetoků = FVE vyrábí pouze pro aktuální spotřebu RD) bude uhrazena 2. záloha 70 % ceny díla.</div>
+    </div>
+    <div class="pay-card">
+      <button class="del-card no-print" title="Odebrat kartu">✕</button>
+      <div class="top"><span class="roman" contenteditable="true">III.</span> · <span class="pct" contenteditable="true">10 %</span></div>
+      <div class="body" contenteditable="true">Po ukončení PPP bude vystavena definitivní faktura na celé dílo — budou odečteny uhrazené zálohy a doúčtována zbývající částka 10 % z celkové ceny.</div>
+    </div>
+  </div>
+
+  <div class="banner"><div class="left">Jak probíhá spolupráce s námi?</div><div class="right"></div></div>
+  <div class="steps" data-save="steps">
+    <div class="step">
+      <button class="del-step no-print" title="Odebrat krok">✕</button>
+      <span class="num" contenteditable="true">1</span><span class="dur" contenteditable="true">1–2 dny</span>
+      <h4 contenteditable="true">Navštívíme místo realizace</h4>
+      <p contenteditable="true">Zkontrolujeme střechu, zaměříme místo pro technologii.</p>
+    </div>
+    <div class="step">
+      <button class="del-step no-print" title="Odebrat krok">✕</button>
+      <span class="num" contenteditable="true">2</span><span class="dur" contenteditable="true">2 týdny</span>
+      <h4 contenteditable="true">Nabídka na míru a kalkulace</h4>
+      <p contenteditable="true">Vybereme ideální technologii a vypracujeme finální kalkulaci.</p>
+    </div>
+    <div class="step">
+      <button class="del-step no-print" title="Odebrat krok">✕</button>
+      <span class="num" contenteditable="true">3</span><span class="dur" contenteditable="true">1–2 měsíce</span>
+      <h4 contenteditable="true">Podpis smlouvy a záloha</h4>
+      <p contenteditable="true">Uhrazení 1. zálohy, příprava projektové dokumentace.</p>
+    </div>
+    <div class="step">
+      <button class="del-step no-print" title="Odebrat krok">✕</button>
+      <span class="num" contenteditable="true">4</span><span class="dur" contenteditable="true">1–2 týdny</span>
+      <h4 contenteditable="true">Odborná instalace a revize</h4>
+      <p contenteditable="true">Naistalujeme FVE, uvedeme do provozu, zajistíme revizi.</p>
+    </div>
+    <div class="step">
+      <button class="del-step no-print" title="Odebrat krok">✕</button>
+      <span class="num" contenteditable="true">5</span><span class="dur" contenteditable="true">2 měsíce</span>
+      <h4 contenteditable="true">Připojení k distribuční síti</h4>
+      <p contenteditable="true">Vyřídíme připojení a předáme FVE do plného provozu.</p>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="logo-cell">
+      <img src="bft/BFT_LOGO_OREZ.png" alt="BF Technology">
+      <span>BF Technology s. r. o.</span>
+    </div>
+    <div class="contacts">
+      <div><span class="lbl">Tel</span>+420 776 111 100</div>
+      <div><span class="lbl">Mail</span>info@bftechnology.cz</div>
+      <div><span class="lbl">Web</span>www.bftechnology.cz</div>
+      <div class="socials">
+        <span class="lbl">Social</span>
+        <a href="#" target="_blank" rel="noopener">Instagram</a>
+        <span class="dot">·</span>
+        <a href="#" target="_blank" rel="noopener">Facebook</a>
+        <span class="dot">·</span>
+        <a href="#" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+    <div class="address">
+      <div class="cap">Sídlo</div>
+      <div class="name">BF Technology s. r. o.</div>
+      <div>[ulice a č. p.]</div>
+      <div>[PSČ a město]</div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  const STORAGE_KEY = 'bft-nabidka-state-v1';
+
+  // ---------- Two-way binding inputs <-> spans ----------
+  function bindFields() {
+    document.querySelectorAll('input[data-field]').forEach(inp => {
+      const key = inp.dataset.field;
+      syncField(key, inp.value);
+      inp.addEventListener('input', e => syncField(key, e.target.value));
+    });
+  }
+  function syncField(key, value) {
+    // Update ALL elements with this data-field (spans, divs, <b>, …) — except inputs
+    document.querySelectorAll(`[data-field="${key}"]`).forEach(el => {
+      if (el.tagName === 'INPUT') return;
+      el.textContent = value;
+    });
+  }
+
+  // ---------- Click-to-upload photo slots ----------
+  function bindPhotoSlots() {
+    document.querySelectorAll('.photo-slot').forEach(slot => {
+      // Use JS property — survives across rebinds but is wiped when innerHTML
+      // replaces the element (so newly restored slots get fresh handlers).
+      if (slot.__bound) return;
+      slot.__bound = true;
+      const input = slot.querySelector('input[type="file"]');
+      if (!input) return;
+      slot.addEventListener('click', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+        input.click();
+      });
+      input.addEventListener('change', () => {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => { setPhoto(slot, reader.result); saveState(); };
+        reader.readAsDataURL(file);
+      });
+    });
+  }
+  function setPhoto(slot, dataUrl) {
+    // Remove placeholder text/span
+    const ph = slot.querySelector('.placeholder');
+    if (ph) ph.remove();
+    let img = slot.querySelector('img');
+    if (!img) {
+      img = document.createElement('img');
+      slot.insertBefore(img, slot.firstChild);
+    }
+    img.src = dataUrl;
+  }
+
+  // ---------- Add / remove rows in items tables ----------
+  function bindTableActions() {
+    document.querySelectorAll('table.items').forEach(table => {
+      if (table.dataset.bound) return;
+      table.dataset.bound = '1';
+      const tbody = table.querySelector('tbody');
+      // Delete buttons on existing rows
+      tbody.querySelectorAll('tr').forEach(addDeleteRowButton);
+      // Add-row button after the table
+      const btn = document.createElement('button');
+      btn.className = 'add-row no-print';
+      btn.type = 'button';
+      btn.textContent = '+ Přidat řádek';
+      btn.addEventListener('click', () => addRow(table));
+      table.parentNode.insertBefore(btn, table.nextSibling);
+    });
+  }
+  function addDeleteRowButton(row) {
+    if (row.querySelector('.del-row')) return;
+    const btn = document.createElement('button');
+    btn.className = 'del-row no-print';
+    btn.type = 'button';
+    btn.textContent = '✕';
+    btn.title = 'Odebrat řádek';
+    btn.addEventListener('click', () => { row.remove(); saveState(); });
+    row.appendChild(btn);
+  }
+  function addRow(table) {
+    const tbody = table.querySelector('tbody');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td class="qty" contenteditable="true">1</td>
+      <td contenteditable="true">Nová položka</td>
+      <td class="price" contenteditable="true">0 Kč</td>`;
+    tbody.appendChild(row);
+    addDeleteRowButton(row);
+    saveState();
+  }
+
+  // ---------- Remove pay card / step ----------
+  function bindPayCards() {
+    document.querySelectorAll('.pay-cards').forEach(container => {
+      if (container.dataset.bound) return;
+      container.dataset.bound = '1';
+      container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('del-card')) {
+          const card = e.target.closest('.pay-card');
+          if (card) { card.remove(); saveState(); }
+        }
+      });
+    });
+  }
+  function bindSteps() {
+    document.querySelectorAll('.steps').forEach(container => {
+      if (container.dataset.bound) return;
+      container.dataset.bound = '1';
+      container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('del-step')) {
+          const step = e.target.closest('.step');
+          if (step) { step.remove(); saveState(); }
+        }
+      });
+    });
+  }
+
+  // ---------- Persist to localStorage ----------
+  function saveState() {
+    const state = { inputs: {}, html: {}, photos: {} };
+    document.querySelectorAll('input[data-field]').forEach(inp => {
+      state.inputs[inp.dataset.field] = inp.value;
+    });
+    document.querySelectorAll('[data-save]').forEach(el => {
+      state.html[el.dataset.save] = el.innerHTML;
+    });
+    document.querySelectorAll('.photo-slot[data-photo]').forEach(slot => {
+      const img = slot.querySelector('img');
+      if (img && img.src.startsWith('data:')) {
+        state.photos[slot.dataset.photo] = img.src;
+      }
+    });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch(e) { console.warn('localStorage full:', e); }
+  }
+  function loadState() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    try {
+      const state = JSON.parse(raw);
+      if (state.inputs) {
+        Object.entries(state.inputs).forEach(([k, v]) => {
+          const inp = document.querySelector(`input[data-field="${k}"]`);
+          if (inp) { inp.value = v; syncField(k, v); }
+        });
+      }
+      if (state.html) {
+        Object.entries(state.html).forEach(([k, v]) => {
+          const el = document.querySelector(`[data-save="${k}"]`);
+          if (el) el.innerHTML = v;
+        });
+      }
+      if (state.photos) {
+        Object.entries(state.photos).forEach(([k, src]) => {
+          const slot = document.querySelector(`.photo-slot[data-photo="${k}"]`);
+          if (slot) setPhoto(slot, src);
+        });
+      }
+      // After innerHTML restore, re-bind delete buttons + photo slots inside restored areas
+      document.querySelectorAll('table.items tbody tr').forEach(addDeleteRowButton);
+      // Newly restored .photo-slot elements have no __bound prop → get bound fresh
+      bindPhotoSlots();
+    } catch (e) { console.warn('Failed to restore:', e); }
+  }
+
+  // ---------- Reset ----------
+  window.resetAll = function() {
+    if (!confirm('Smazat všechny vyplněné hodnoty a obnovit šablonu?')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    bindFields();
+    bindPhotoSlots();
+    bindTableActions();
+    bindPayCards();
+    bindSteps();
+    loadState();
+    document.addEventListener('input', saveState);
+  });
+})();
+</script>
+</body>
+</html>
