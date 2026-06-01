@@ -548,7 +548,7 @@
   }
   .title-page .content > * { pointer-events: auto; }
   .title-page .top-row {
-    display: flex; justify-content: space-between; align-items: flex-start;
+    display: flex; justify-content: space-between; align-items: center;
     margin-bottom: 3.5cm;
   }
   .title-page .middle { flex: 0 0 auto; }
@@ -565,25 +565,32 @@
     font-weight: 500;
     line-height: 1.5;
   }
+  .title-page .corner {
+    text-shadow: 0 1px 4px rgba(0,0,0,0.45);
+    font-weight: 700;
+  }
   .title-page .corner .badge {
     display: block;
-    font-size: 14pt;
+    font-size: 15pt;
     font-weight: 700;
     letter-spacing: 0.05em;
-    margin-top: 4px;
+    margin-top: 6px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.45);
   }
   .title-page h1 {
     font-size: 54pt;
     font-weight: 900;
     line-height: 1;
     margin: 0;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.35);
   }
   .title-page h1 .sub {
     display: block;
     font-size: 22pt;
-    font-weight: 400;
+    font-weight: 500;
     margin-top: 14px;
-    opacity: 0.95;
+    opacity: 1;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.45);
   }
   .title-page .meta-grid {
     display: grid;
@@ -593,17 +600,22 @@
     border-bottom: 1px solid rgba(255,255,255,0.35);
   }
   .title-page .meta-grid > div .lbl {
-    font-size: 8pt; text-transform: uppercase; letter-spacing: 0.2em;
-    opacity: 0.9; display: block; margin-bottom: 6px; font-weight: 500;
+    font-size: 9pt; text-transform: uppercase; letter-spacing: 0.18em;
+    opacity: 1; display: block; margin-bottom: 6px; font-weight: 700;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.55);
   }
   .title-page .meta-grid > div .val {
     font-size: 18pt; font-weight: 700; line-height: 1.1;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.45);
   }
   .title-page .bottom-row {
     display: flex; justify-content: space-between; align-items: flex-end;
     font-size: 10pt;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.45);
+    font-weight: 500;
   }
-  .title-page .bottom-row .left b { font-weight: 700; }
+  .title-page .bottom-row .left b,
+  .title-page .bottom-row .right b { font-weight: 700; }
   .title-page .upload-hint {
     position: absolute; bottom: 12px; right: 12px; z-index: 3;
     background: rgba(0,0,0,0.5);
@@ -769,9 +781,13 @@
       </h1>
     </div>
     <div class="bottom-block">
+      <div class="bottom-row">
+        <div class="left"><b>BF Technology s. r. o.</b> &nbsp;·&nbsp; info@bftechnology.cz &nbsp;·&nbsp; www.bftechnology.cz</div>
+        <div class="right">Vystaveno <b data-field="datum">9. 3. 2026</b> &nbsp;·&nbsp; Platnost do <b data-field="platnost">23. 3. 2026</b></div>
+      </div>
       <div class="meta-grid">
         <div>
-          <span class="lbl">Objekt / lokalita</span>
+          <span class="lbl">Adresa</span>
           <span class="val" data-field="objekt">Varnsdorf</span>
         </div>
         <div>
@@ -782,10 +798,6 @@
           <span class="lbl">Odběratel</span>
           <span class="val" data-field="odberatel">[Jméno odběratele]</span>
         </div>
-      </div>
-      <div class="bottom-row">
-        <div class="left"><b>BF Technology s. r. o.</b> &nbsp;·&nbsp; info@bftechnology.cz &nbsp;·&nbsp; www.bftechnology.cz</div>
-        <div class="right">Vystaveno <b data-field="datum">9. 3. 2026</b> &nbsp;·&nbsp; Platnost do <b data-field="platnost">23. 3. 2026</b></div>
       </div>
     </div>
   </div>
@@ -836,7 +848,7 @@
         <input type="text" data-field="vykon" value="9,9 kWp">
       </div>
       <div class="field">
-        <label>Objekt / lokalita</label>
+        <label>Adresa</label>
         <input type="text" data-field="objekt" value="Varnsdorf">
       </div>
       <div class="field">
@@ -886,7 +898,7 @@
         <span class="sep">·</span>
         <span class="lbl">Výkon:</span> <span class="val" data-field="vykon">9,9 kWp</span>
         <span class="sep">·</span>
-        <span class="lbl">Objekt:</span> <span class="val" data-field="objekt">Varnsdorf</span>
+        <span class="lbl">Adresa:</span> <span class="val" data-field="objekt">Varnsdorf</span>
       </div>
       POUŽITÉ TECHNOLOGIE
     </div>
@@ -988,7 +1000,7 @@
         <span class="sep">·</span>
         <span class="lbl">Výkon:</span> <span class="val" data-field="vykon">9,9 kWp</span>
         <span class="sep">·</span>
-        <span class="lbl">Objekt:</span> <span class="val" data-field="objekt">Varnsdorf</span>
+        <span class="lbl">Adresa:</span> <span class="val" data-field="objekt">Varnsdorf</span>
       </div>
       KALKULAČNÍ LIST FVE
     </div>
@@ -1031,7 +1043,7 @@
         <span class="sep">·</span>
         <span class="lbl">Výkon:</span> <span class="val" data-field="vykon">9,9 kWp</span>
         <span class="sep">·</span>
-        <span class="lbl">Objekt:</span> <span class="val" data-field="objekt">Varnsdorf</span>
+        <span class="lbl">Adresa:</span> <span class="val" data-field="objekt">Varnsdorf</span>
       </div>
       KALKULAČNÍ LIST FVE
     </div>
@@ -1089,7 +1101,7 @@
         <span class="sep">·</span>
         <span class="lbl">Výkon:</span> <span class="val" data-field="vykon">9,9 kWp</span>
         <span class="sep">·</span>
-        <span class="lbl">Objekt:</span> <span class="val" data-field="objekt">Varnsdorf</span>
+        <span class="lbl">Adresa:</span> <span class="val" data-field="objekt">Varnsdorf</span>
       </div>
       KALKULAČNÍ LIST FVE
     </div>
