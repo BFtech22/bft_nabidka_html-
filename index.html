@@ -3149,7 +3149,79 @@
     }
   });
 
-  // ---------- Detaily technologií → propsat do karet na str. 3 ----------
+  // ---------- Detaily technologií → propsat do karet na str. 3 + řádek na str. 4 ----------
+  // Mapování karty → patternu v cenové kalkulaci + výchozímu sufixu po em-dashi
+  const MAIN_TABLE_INFO = {
+    'card-panel':      { regex: /trina|panel|fotovolt|jinko|solar/i,            suffixDefault: 'fotovoltaické panely' },
+    'card-stridac':    { regex: /solinteg.*(mht|10k)|střídač|inverter|growatt|sungrow|huawei|fronius/i, suffixDefault: 'hybridní střídač' },
+    'card-baterie':    { regex: /dyness|t10|tower|baterie|úložiště|pylontech|byd/i, suffixDefault: 'bateriové úložiště' },
+    'card-wallbox':    { regex: /solinteg.*s11|wallbox|nabíječ/i,                suffixDefault: 'wallbox' },
+    'card-konstrukce': { regex: /konstrukce|hák|příchytka|zátěž/i,               suffixDefault: 'střešní konstrukce' },
+  };
+
+  function syncMainTableForCard(card) {
+    if (!card) return;
+    let info = null;
+    for (const cls of Object.keys(MAIN_TABLE_INFO)) {
+      if (card.classList.contains(cls)) { info = MAIN_TABLE_INFO[cls]; break; }
+    }
+    if (!info) return;
+
+    const brandName = (card.querySelector('.brand-name')?.textContent || '').trim();
+    const brandModelEl = card.querySelector('.brand-model');
+    const brandModel = brandModelEl ? brandModelEl.textContent.trim() : '';
+
+    const mainTbody = document.querySelector('table[data-table="main"] tbody');
+    if (!mainTbody) return;
+
+    mainTbody.querySelectorAll('tr').forEach(row => {
+      const descCell = row.querySelector('td:nth-child(2)');
+      if (!descCell) return;
+      const current = descCell.textContent;
+      if (!info.regex.test(current)) return;
+      // Zachovat sufix po em-dashi/en-dashi
+      const m = current.match(/\s*[–—]\s*(.+)$/);
+      const suffix = m ? m[1].trim() : info.suffixDefault;
+      let newDesc = brandName;
+      if (brandModel) newDesc += ' ' + brandModel;
+      if (suffix) newDesc += ' – ' + suffix;
+      if (descCell.textContent !== newDesc) descCell.textContent = newDesc;
+    });
+  }
+
+  function syncMainTableDl(card, dlKey, val) {
+    if (!card || !val) return;
+    const mainTbody = document.querySelector('table[data-table="main"] tbody');
+    if (!mainTbody) return;
+
+    // Specifické nahrazení v popisu řádku Cenové kalkulace (best-effort regex replace)
+    const handlers = {
+      'card-baterie': {
+        // "10 kWh" / "10,5 kWh" / "10,6 – 21 kWh"
+        'kapacit': (desc) => desc.replace(/\d+(?:[,\.]\d+)?(?:\s*[–-]\s*\d+(?:[,\.]\d+)?)?\s*kWh/i, val.trim()),
+      },
+      'card-stridac': {
+        // "10 kW" / "10,5 kW" / "12 000 W" / "12000 W" — povol volitelný "k"
+        'max': (desc) => desc.replace(/\d[\d\s.,]*\s*k?W\b/i, val.trim()),
+      },
+    };
+    let cls = null;
+    for (const c of Object.keys(handlers)) {
+      if (card.classList.contains(c) && handlers[c][dlKey]) { cls = c; break; }
+    }
+    if (!cls) return;
+    const fn = handlers[cls][dlKey];
+    const info = MAIN_TABLE_INFO[cls];
+    if (!info) return;
+
+    mainTbody.querySelectorAll('tr').forEach(row => {
+      const descCell = row.querySelector('td:nth-child(2)');
+      if (!descCell || !info.regex.test(descCell.textContent)) return;
+      const newDesc = fn(descCell.textContent);
+      if (newDesc !== descCell.textContent) descCell.textContent = newDesc;
+    });
+  }
+
   // Cíl ve formátu "card-class:brand-name" | "card-class:brand-model" | "card-class:dl:dt-prefix"
   // | "card-konstrukce:select-konstrukce"
   function applyDetailTarget(inp) {
@@ -3172,10 +3244,11 @@
           el.textContent = val;
         }
       }
+      syncMainTableForCard(card);
     } else if (field === 'brand-model') {
       const el = card.querySelector('.brand-model');
       if (el) el.textContent = val;
-      // Pokud existuje pouze spacer (např. konstrukce, optimizer), nic nezměníme
+      syncMainTableForCard(card);
     } else if (field === 'dl' && arg) {
       card.querySelectorAll('dl dt').forEach(dt => {
         if (dt.textContent.trim().toLowerCase().startsWith(arg.toLowerCase())) {
@@ -3183,12 +3256,14 @@
           if (dd && dd.tagName === 'DD') dd.textContent = val;
         }
       });
+      syncMainTableDl(card, arg, val);
     } else if (field === 'select-konstrukce') {
       const sel = card.querySelector('#konstrukce-type-select');
       if (sel && sel.value !== val) {
         sel.value = val;
         if (typeof applyKonstrukceType === 'function') applyKonstrukceType(sel);
       }
+      syncMainTableForCard(card);
     }
   }
   function bindDetailInputs() {
