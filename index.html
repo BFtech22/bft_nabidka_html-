@@ -1372,6 +1372,74 @@
     border-top: 2px solid var(--brand);
   }
 
+  /* Toggle "uplatnit dotaci" v hlavičce sekce 5 */
+  .kalkulator-screen .kalk-toggle-h2 {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; margin-bottom: 10px;
+  }
+  .kalkulator-screen .kalk-toggle-h2 h2 {
+    margin: 0; padding-bottom: 6px;
+    border-bottom: 2px solid var(--brand);
+    flex: 1;
+  }
+  .kalkulator-screen .kalk-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 10pt; font-weight: 600;
+    color: var(--brand-dark);
+    cursor: pointer; padding: 4px 10px;
+    border: 1px solid #d1d1d1; border-radius: 4px;
+    background: #fafafa;
+    transition: background 0.15s, border-color 0.15s;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .kalkulator-screen .kalk-toggle:hover { background: #f0f5e8; border-color: var(--brand); }
+  .kalkulator-screen .kalk-toggle input[type="checkbox"] {
+    margin: 0; width: 14px; height: 14px;
+    accent-color: var(--brand); cursor: pointer;
+  }
+  .kalkulator-screen .kalk-toggle input[type="checkbox"]:checked + span { color: var(--brand); }
+
+  /* Když je dotace vypnutá, schovej řádek "Dotace" v souhrnu, v table-opt a scope-nzu položku */
+  body.dotace-off .row-dotace,
+  body.dotace-off .scope-nzu { display: none !important; }
+
+  /* Detaily technologií — kompaktní mřížka inputů (3 ve sloupci) */
+  .kalkulator-screen .kalk-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .kalkulator-screen .kalk-detail-field {
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .kalkulator-screen .kalk-detail-field label {
+    font-size: 8.5pt; font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--brand-dark);
+  }
+  .kalkulator-screen .kalk-detail-field input,
+  .kalkulator-screen .kalk-detail-field select {
+    border: 1px solid #d1d1d1;
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-family: inherit;
+    font-size: 10pt;
+    color: var(--black);
+    background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .kalkulator-screen .kalk-detail-field input:focus,
+  .kalkulator-screen .kalk-detail-field select:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 2px rgba(139, 184, 85, 0.2);
+  }
+  .kalkulator-screen .kalk-detail-field input[disabled] {
+    background: #f5f5f5; color: #999; cursor: not-allowed;
+  }
+
   @media print {
     .kalkulator-screen { display: none !important; }
   }
@@ -1639,11 +1707,82 @@
 
       <!-- DOTACE -->
       <div class="form-section">
-        <h2>5 · Dotace NZÚ (odečte se z výsledné ceny)</h2>
+        <div class="kalk-toggle-h2">
+          <h2>5 · Dotace NZÚ (odečte se z výsledné ceny)</h2>
+          <label class="kalk-toggle">
+            <input type="checkbox" id="kalk-dotace-enable">
+            <span>uplatnit</span>
+          </label>
+        </div>
         <div class="kalk-zakaznik-row">
           <label>Předpokládaná dotace</label>
-          <input type="number" id="kalk-dotace" value="0" step="100">
+          <input type="number" id="kalk-dotace" value="0" step="100" disabled>
           <span class="auto">odečte se před výpočtem výsledné ceny</span>
+        </div>
+        <p class="desc" style="margin-top:8px">Pokud necháš vypnuté, všechny zmínky o NZÚ se z nabídky odstraní (str. 4 souhrn nákladů, řádek dotace v kalkulaci, rozsah prací).</p>
+      </div>
+
+      <!-- DETAILY TECHNOLOGIÍ — propisuje se do karet str. 3 -->
+      <div class="form-section">
+        <h2>6 · Detaily technologií</h2>
+        <p class="desc">Vyplň zde a propíše se do karet na str. 3 (Použité technologie). Counts (počet ks) jsou v tabulkách 1 a 2 výše.</p>
+        <div class="kalk-detail-grid">
+          <div class="kalk-detail-field">
+            <label>Typ panelu</label>
+            <input type="text" data-detail-target="card-panel:brand-name" value="Trina Solar">
+          </div>
+          <div class="kalk-detail-field">
+            <label>Model panelu</label>
+            <input type="text" data-detail-target="card-panel:brand-model" value="450 TOPCon">
+          </div>
+          <div class="kalk-detail-field">
+            <label>Rozměr panelu</label>
+            <input type="text" data-detail-target="card-panel:dl:rozm" value="1762 × 1134 × 30 mm">
+          </div>
+          <div class="kalk-detail-field">
+            <label>Typ střídače</label>
+            <input type="text" data-detail-target="card-stridac:brand-name" value="Solinteg">
+          </div>
+          <div class="kalk-detail-field">
+            <label>Model střídače</label>
+            <input type="text" data-detail-target="card-stridac:brand-model" value="MHT-10K-25">
+          </div>
+          <div class="kalk-detail-field">
+            <label>Výstupní výkon střídače</label>
+            <input type="text" data-detail-target="card-stridac:dl:max" value="10 000 W">
+          </div>
+          <div class="kalk-detail-field">
+            <label>Typ baterie</label>
+            <input type="text" data-detail-target="card-baterie:brand-name" value="Dyness Tower">
+          </div>
+          <div class="kalk-detail-field">
+            <label>Model baterie</label>
+            <input type="text" data-detail-target="card-baterie:brand-model" value="T10 · 10 kWh">
+          </div>
+          <div class="kalk-detail-field">
+            <label>Kapacita baterie</label>
+            <input type="text" data-detail-target="card-baterie:dl:kapacit" value="10,6 – 21 kWh">
+          </div>
+          <div class="kalk-detail-field">
+            <label>Typ konstrukce</label>
+            <select data-detail-target="card-konstrukce:select-konstrukce">
+              <option value="hak">Střešní hák</option>
+              <option value="falc">Falcová příchytka</option>
+              <option value="zatez">Zátěžová konstrukce</option>
+            </select>
+          </div>
+          <div class="kalk-detail-field">
+            <label>Typ wallboxu</label>
+            <input type="text" data-detail-target="card-wallbox:brand-name" value="Solinteg">
+          </div>
+          <div class="kalk-detail-field">
+            <label>Model wallboxu</label>
+            <input type="text" data-detail-target="card-wallbox:brand-model" value="S11K-BS0">
+          </div>
+          <div class="kalk-detail-field" style="grid-column: span 3">
+            <label>STOP tlačítko (model + popisek je řízen ze sekce 1 výše — viz dropdown „Optimizéry")</label>
+            <input type="text" disabled placeholder="(automatický model z kalkulátoru: nastav v sekci 1 · Technologie)">
+          </div>
         </div>
       </div>
     </div>
@@ -1660,7 +1799,7 @@
             <tr><td class="col-label">Montáž / práce</td><td id="kalk-prace-souhrn-bez">0</td><td id="kalk-prace-souhrn-vc">0</td></tr>
             <tr class="row-sleva"><td class="col-label">Sleva</td><td id="kalk-sleva-souhrn-bez">0</td><td id="kalk-sleva-souhrn-vc">0</td></tr>
             <tr class="row-total"><td class="col-label">Fakturace</td><td id="kalk-fakt-bez">0</td><td id="kalk-fakt-vc">0</td></tr>
-            <tr><td class="col-label">Dotace</td><td>—</td><td id="kalk-dotace-display">0</td></tr>
+            <tr class="row-dotace"><td class="col-label">Dotace</td><td>—</td><td id="kalk-dotace-display">0</td></tr>
             <tr class="row-final"><td class="col-label">Výsledná cena</td><td>—</td><td id="kalk-vysledna">0</td></tr>
           </tbody>
         </table>
@@ -2004,7 +2143,7 @@
       <tr><td class="qty" contenteditable="true">1</td><td contenteditable="true">Technologie FVE — panely, střídač, baterie, wallbox</td><td class="price" contenteditable="true">209 000 Kč</td></tr>
       <tr><td class="qty" contenteditable="true">1</td><td contenteditable="true">Konstrukce a elektromateriál — profily, jističe, rozvaděče AC / DC / ER, ochranné prvky</td><td class="price" contenteditable="true">98 000 Kč</td></tr>
       <tr><td class="qty" contenteditable="true">1</td><td contenteditable="true">Práce, montáž a doprava</td><td class="price" contenteditable="true">66 080 Kč</td></tr>
-      <tr><td class="qty" contenteditable="true">1</td><td contenteditable="true">Dotace Nová zelená úsporám (po vyřízení žádosti)</td><td class="price" contenteditable="true">0 Kč</td></tr>
+      <tr class="row-dotace"><td class="qty" contenteditable="true">1</td><td contenteditable="true">Dotace Nová zelená úsporám (po vyřízení žádosti)</td><td class="price" contenteditable="true">0 Kč</td></tr>
       <tr><td class="qty" contenteditable="true">1</td><td contenteditable="true">Poskytnutá sleva</td><td class="price" contenteditable="true">− 5 000 Kč</td></tr>
     </tbody>
     <tfoot>
@@ -2016,7 +2155,7 @@
   <div class="banner"><div class="left">Rozsah prací</div><div class="right"></div></div>
   <div class="scope" data-save="scope">
     <div contenteditable="true">Projektová dokumentace úrovně DPS a DSP<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
-    <div contenteditable="true">Zpracování a podání žádosti o dotaci NZÚ (SFŽP)<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div class="scope-nzu" contenteditable="true">Zpracování a podání žádosti o dotaci NZÚ (SFŽP)<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
     <div contenteditable="true">Vyřízení připojení k distribuční síti<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
     <div contenteditable="true">Elektrorevize odběrného místa, FVE a elektromobility<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
     <div contenteditable="true">Doplnění povinných prvků v elektroměrovém rozvaděči<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
@@ -2361,6 +2500,13 @@
     'card-konstrukce': /konstrukce/i,
     'card-optimizer':  /tigo|optimiz|rss|stop tlačít/i,
   };
+  // Klíčové slovo pro odstranění z popisu „Technologie FVE — panely, střídač, baterie, wallbox" (str. 5)
+  const CARD_TO_SOUHRN_KEYWORD = {
+    'card-panel':    'panely',
+    'card-stridac':  'střídač',
+    'card-baterie':  'baterie',
+    'card-wallbox':  'wallbox',
+  };
   function removeRelatedMainRow(card) {
     const mainTbody = document.querySelector('table[data-table="main"] tbody');
     if (!mainTbody) return 0;
@@ -2375,6 +2521,23 @@
     }
     return removed;
   }
+  function removeKeywordFromSouhrn(card) {
+    let keyword = null;
+    for (const [cls, kw] of Object.entries(CARD_TO_SOUHRN_KEYWORD)) {
+      if (card.classList.contains(cls)) { keyword = kw; break; }
+    }
+    if (!keyword) return false;
+    const optTbody = document.querySelector('table[data-table="opt"] tbody');
+    const firstRow = optTbody?.querySelector('tr');
+    const descCell = firstRow?.querySelector('td:nth-child(2)');
+    if (!descCell) return false;
+    let t = descCell.textContent;
+    // Odstraní ", keyword" nebo "keyword, " nebo samotné slovo. Pak vyčistí dvojité čárky a koncovou čárku.
+    t = t.replace(new RegExp(`,?\\s*${keyword}\\s*,?`, 'i'), ',');
+    t = t.replace(/,\s*,/g, ',').replace(/—\s*,/, '— ').replace(/,\s*$/, '').replace(/\s{2,}/g, ' ').trim();
+    descCell.textContent = t;
+    return true;
+  }
   function bindCards() {
     document.querySelectorAll('.cards').forEach(container => {
       if (container.dataset.bound) return;
@@ -2384,10 +2547,14 @@
           const card = e.target.closest('.card');
           if (card && confirm('Odebrat kartu „' + (card.querySelector('.card-hdr')?.textContent || 'technologie') + '"?')) {
             const removedMainRows = removeRelatedMainRow(card);
+            const souhrnEdited = removeKeywordFromSouhrn(card);
             card.remove();
             if (typeof saveState === 'function') saveState();
-            if (removedMainRows > 0 && typeof flashStatus === 'function') {
-              flashStatus(`🗑 Karta odebrána · ${removedMainRows} řádek z cenové kalkulace také smazán`);
+            const parts = [];
+            if (removedMainRows > 0) parts.push(`${removedMainRows} řádek z cenové kalkulace`);
+            if (souhrnEdited) parts.push('text v souhrnu upraven');
+            if (parts.length && typeof flashStatus === 'function') {
+              flashStatus(`🗑 Karta odebrána · ${parts.join(' · ')}`);
             }
           }
         }
@@ -2676,6 +2843,8 @@
         }
         document.querySelectorAll('table.items tbody tr').forEach(addDeleteRowButton);
         bindPhotoSlots();
+        if (typeof ensureDotaceClasses === 'function') ensureDotaceClasses();
+        if (typeof applyDotaceVisibility === 'function') applyDotaceVisibility();
         saveState();
         flashStatus(`📂 Načteno: ${file.name}`);
       } catch (err) {
@@ -2921,6 +3090,136 @@
     applyOptimizerModel(sel.value);
   }
 
+  // ---------- Dotace NZÚ toggle (vypnuto = skryje všechny zmínky v nabídce) ----------
+  // Re-apply .row-dotace + .scope-nzu třídy detekcí podle textu (potřeba protože loadState
+  // restoruje innerHTML z localStorage a tam je nemusí být — uživatel si nabídku uložil
+  // ještě před tím než jsme tyhle třídy přidali).
+  function ensureDotaceClasses() {
+    // Table-opt: řádek obsahující "Dotace" / "NZÚ" / "Nová zelená"
+    document.querySelectorAll('table[data-table="opt"] tbody tr').forEach(tr => {
+      const t = tr.querySelector('td:nth-child(2)')?.textContent || '';
+      if (/dotace|nzú|nzu|nová\s*zelená/i.test(t)) tr.classList.add('row-dotace');
+    });
+    // Scope: položka o NZÚ
+    document.querySelectorAll('.scope > div').forEach(div => {
+      if (/nzú|nzu|nová\s*zelená|žádosti?\s*o\s*dotaci/i.test(div.textContent)) {
+        div.classList.add('scope-nzu');
+      }
+    });
+  }
+
+  function applyDotaceVisibility() {
+    const cb = document.getElementById('kalk-dotace-enable');
+    const inp = document.getElementById('kalk-dotace');
+    const enabled = cb ? cb.checked : false;
+    // Vždy nejdřív zajisti, že označení existuje (vůči restorovanému HTML z localStorage)
+    ensureDotaceClasses();
+    document.body.classList.toggle('dotace-off', !enabled);
+    if (inp) {
+      inp.disabled = !enabled;
+      if (!enabled) inp.value = 0;
+    }
+    try { localStorage.setItem(STORAGE_KEY + ':dotace', enabled ? '1' : '0'); } catch(e){}
+  }
+  function bindDotaceToggle() {
+    const cb = document.getElementById('kalk-dotace-enable');
+    if (!cb) return;
+    // Restore from localStorage (default = off)
+    try { cb.checked = localStorage.getItem(STORAGE_KEY + ':dotace') === '1'; } catch(e){}
+    cb.addEventListener('change', () => {
+      applyDotaceVisibility();
+      if (typeof recalcKalk === 'function') recalcKalk();
+    });
+    applyDotaceVisibility();
+  }
+
+  // ---------- PDF export filename = BFtechnology_CN<cislo>.pdf ----------
+  let _originalTitle = null;
+  window.addEventListener('beforeprint', () => {
+    const cisloRaw = (document.querySelector('input[data-field="cislo"][data-form="1"]')?.value || '').trim();
+    const cislo = cisloRaw.replace(/[^A-Za-z0-9-]/g, '') || '00000000';
+    const cn = /^CN/i.test(cislo) ? cislo.toUpperCase() : `CN${cislo}`;
+    if (_originalTitle === null) _originalTitle = document.title;
+    document.title = `BFtechnology_${cn}`;
+  });
+  window.addEventListener('afterprint', () => {
+    if (_originalTitle !== null) {
+      document.title = _originalTitle;
+      _originalTitle = null;
+    }
+  });
+
+  // ---------- Detaily technologií → propsat do karet na str. 3 ----------
+  // Cíl ve formátu "card-class:brand-name" | "card-class:brand-model" | "card-class:dl:dt-prefix"
+  // | "card-konstrukce:select-konstrukce"
+  function applyDetailTarget(inp) {
+    const target = inp.dataset.detailTarget;
+    if (!target) return;
+    const parts = target.split(':');
+    const cardClass = parts[0];
+    const field = parts[1];
+    const arg = parts[2];
+    const card = document.querySelector(`.card.${cardClass}`);
+    if (!card) return;
+    const val = inp.value;
+
+    if (field === 'brand-name') {
+      const el = card.querySelector('.brand-name');
+      if (el) {
+        if (el.tagName === 'SELECT') {
+          // U konstrukce je brand-name <select> — zde nepřepisujeme (select-konstrukce má vlastní cestu)
+        } else {
+          el.textContent = val;
+        }
+      }
+    } else if (field === 'brand-model') {
+      const el = card.querySelector('.brand-model');
+      if (el) el.textContent = val;
+      // Pokud existuje pouze spacer (např. konstrukce, optimizer), nic nezměníme
+    } else if (field === 'dl' && arg) {
+      card.querySelectorAll('dl dt').forEach(dt => {
+        if (dt.textContent.trim().toLowerCase().startsWith(arg.toLowerCase())) {
+          const dd = dt.nextElementSibling;
+          if (dd && dd.tagName === 'DD') dd.textContent = val;
+        }
+      });
+    } else if (field === 'select-konstrukce') {
+      const sel = card.querySelector('#konstrukce-type-select');
+      if (sel && sel.value !== val) {
+        sel.value = val;
+        if (typeof applyKonstrukceType === 'function') applyKonstrukceType(sel);
+      }
+    }
+  }
+  function bindDetailInputs() {
+    document.querySelectorAll('[data-detail-target]').forEach(inp => {
+      if (inp.dataset.detailBound) return;
+      inp.dataset.detailBound = '1';
+      const evt = inp.tagName === 'SELECT' ? 'change' : 'input';
+      inp.addEventListener(evt, () => applyDetailTarget(inp));
+      // Aplikuj hned i na init (a propíše do karet)
+      applyDetailTarget(inp);
+    });
+  }
+  function saveDetailState() {
+    const state = {};
+    document.querySelectorAll('[data-detail-target]').forEach(inp => {
+      if (!inp.disabled) state[inp.dataset.detailTarget] = inp.value;
+    });
+    try { localStorage.setItem(STORAGE_KEY + ':detaily', JSON.stringify(state)); } catch(e){}
+  }
+  function loadDetailState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY + ':detaily');
+      if (!raw) return;
+      const state = JSON.parse(raw);
+      Object.entries(state).forEach(([target, v]) => {
+        const inp = document.querySelector(`[data-detail-target="${target}"]`);
+        if (inp) inp.value = v;
+      });
+    } catch(e){}
+  }
+
   // ---------- KALKULÁTOR — vnitřní výpočty a propsání do nabídky ----------
   function getDph() {
     const sel = document.querySelector('select[data-field="dph"][data-form="1"]');
@@ -2983,8 +3282,9 @@
     const slevaBez = slevaVc / mult;
     document.getElementById('kalk-sleva-bez').textContent = fmtKc(slevaBez);
 
-    // Dotace
-    const dotace = num(document.getElementById('kalk-dotace'));
+    // Dotace — když není uplatněna (checkbox vypnutý), použij 0
+    const dotaceEnabled = document.getElementById('kalk-dotace-enable')?.checked || false;
+    const dotace = dotaceEnabled ? num(document.getElementById('kalk-dotace')) : 0;
 
     // Souhrn pro zákazníka
     const matBez = techZakBez + konstrZakBez;
@@ -3188,6 +3488,15 @@
     bindDatumRecalc();
     bindKalkInputs();
     bindOptimizerSelect();
+    bindDotaceToggle();
+    loadDetailState();
+    bindDetailInputs();
+    document.addEventListener('input', e => {
+      if (e.target.matches('[data-detail-target]')) saveDetailState();
+    });
+    document.addEventListener('change', e => {
+      if (e.target.matches('[data-detail-target]')) saveDetailState();
+    });
     recalcKalk();
     applyPageNumbers();
 
