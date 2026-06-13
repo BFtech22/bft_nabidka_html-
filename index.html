@@ -1029,6 +1029,39 @@
     color: #555;
     cursor: not-allowed;
   }
+  /* Input s pevně přilepenou jednotkou (např. kWp) — uživatel nemůže smazat */
+  .form-screen .form-field .unit-input {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid #d1d1d1;
+    border-radius: 4px;
+    background: #fff;
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .form-screen .form-field .unit-input input {
+    border: 0 !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    flex: 1;
+    min-width: 0;
+    box-shadow: none !important;
+  }
+  .form-screen .form-field .unit-input .unit-label {
+    display: flex; align-items: center;
+    padding: 0 14px;
+    background: var(--cream);
+    color: var(--brand-dark);
+    font-weight: 700;
+    font-size: 10.5pt;
+    border-left: 1px solid #d1d1d1;
+    user-select: none;
+    pointer-events: none;
+  }
+  .form-screen .form-field .unit-input:focus-within {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(139, 184, 85, 0.2);
+  }
   .form-screen .form-field input.manual {
     background: #fffdf2;
     color: var(--black);
@@ -1360,6 +1393,21 @@
       padding: 1.2cm 1.5cm;
     }
     .title-page { padding: 0 !important; }
+    /* Titulka — všechny text-shadow potlačí (jinak je print engine renderuje jako černý obdélník kolem textu) */
+    .title-page,
+    .title-page * {
+      text-shadow: none !important;
+      -webkit-box-shadow: none !important;
+    }
+    .title-page [contenteditable] { outline: 0 !important; border: 0 !important; }
+    .title-page .title-socials a {
+      background: transparent !important;
+      color: #fff !important;
+      box-shadow: none !important;
+      border: 0 !important;
+      padding: 2px 4px !important;
+    }
+    .title-page .title-socials .dot { color: rgba(255,255,255,0.5) !important; }
     .hero-right.photo-slot::after,
     .card .product-photo:empty,
     .card .product-photo:hover { background: transparent !important; }
@@ -1473,8 +1521,11 @@
       </div>
       <div class="form-field">
         <label>Výkon FVE</label>
-        <input type="text" data-field="vykon" data-form="1" value="9,9 kWp">
-        <span class="hint">Včetně jednotky, např. 9,9 kWp</span>
+        <div class="unit-input">
+          <input type="text" data-field="vykon" data-form="1" value="9,9" placeholder="9,9" inputmode="decimal">
+          <span class="unit-label">kWp</span>
+        </div>
+        <span class="hint">Stačí číslo — „kWp" je pevné a propíše se k záhlavím automaticky</span>
       </div>
       <div class="form-field">
         <label>Sazba DPH (%)</label>
@@ -1488,15 +1539,6 @@
     </div>
   </div>
 
-  <!-- DALŠÍ ÚPRAVY -->
-  <div class="form-section">
-    <h2>3 · Detailní úpravy</h2>
-    <p class="desc">
-      Dodavatel, kontakty, popisy variant, položkový rozpočet, technologie, rozsah prací, platební
-      podmínky atd. se upravují přímo na příslušných stranách náhledu — všechny texty jsou klikatelné
-      (contenteditable). Najetí myší na kartu / řádek / krok ukáže <strong>✕</strong> pro odebrání.
-    </p>
-  </div>
 
   <!-- AKCE -->
   <div class="form-actions">
@@ -2102,18 +2144,26 @@
     });
   }
   function syncField(key, value) {
-    // Update ALL elements with this data-field — sync between multiple inputs + textNodes
+    // Pro "vykon" pole: uložíme jen číslo, displej dostane " kWp" suffix.
+    // Toleruje i starý formát "9,9 kWp" v localStorage (suffix se odstraní).
+    let stored = value;
+    if (key === 'vykon' && typeof stored === 'string') {
+      stored = stored.replace(/\s*k?Wp\s*$/i, '').trim();
+    }
     document.querySelectorAll(`[data-field="${key}"]`).forEach(el => {
       if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
-        if (el.value !== value) el.value = value;
+        if (el.value !== stored) el.value = stored;
       } else {
-        el.textContent = value;
+        if (key === 'vykon') {
+          el.textContent = stored ? `${stored} kWp` : '';
+        } else {
+          el.textContent = stored;
+        }
       }
     });
-    // Update draft title in form screen
     if (key === 'cislo') {
       const dt = document.getElementById('draft-title');
-      if (dt) dt.textContent = value;
+      if (dt) dt.textContent = stored;
     }
   }
 
@@ -2301,7 +2351,30 @@
     });
   }
 
-  // ---------- Remove technology cards (page 2) ----------
+  // ---------- Remove technology cards (page 3) + kaskáda do Cenové kalkulace (page 4) ----------
+  // Mapování card-class → regex pro vyhledání odpovídajícího řádku v table-main
+  const CARD_TO_MAIN_ROW = {
+    'card-panel':      /trina|panel/i,
+    'card-stridac':    /solinteg.*(mht|10k)|střídač/i,
+    'card-baterie':    /dyness|t10|tower|baterie/i,
+    'card-wallbox':    /solinteg.*s11|wallbox/i,
+    'card-konstrukce': /konstrukce/i,
+    'card-optimizer':  /tigo|optimiz|rss|stop tlačít/i,
+  };
+  function removeRelatedMainRow(card) {
+    const mainTbody = document.querySelector('table[data-table="main"] tbody');
+    if (!mainTbody) return 0;
+    let removed = 0;
+    for (const [cls, pattern] of Object.entries(CARD_TO_MAIN_ROW)) {
+      if (!card.classList.contains(cls)) continue;
+      mainTbody.querySelectorAll('tr').forEach(row => {
+        const desc = row.querySelector('td:nth-child(2)')?.textContent || '';
+        if (pattern.test(desc)) { row.remove(); removed++; }
+      });
+      break;
+    }
+    return removed;
+  }
   function bindCards() {
     document.querySelectorAll('.cards').forEach(container => {
       if (container.dataset.bound) return;
@@ -2310,8 +2383,12 @@
         if (e.target.classList && e.target.classList.contains('del-card')) {
           const card = e.target.closest('.card');
           if (card && confirm('Odebrat kartu „' + (card.querySelector('.card-hdr')?.textContent || 'technologie') + '"?')) {
+            const removedMainRows = removeRelatedMainRow(card);
             card.remove();
             if (typeof saveState === 'function') saveState();
+            if (removedMainRows > 0 && typeof flashStatus === 'function') {
+              flashStatus(`🗑 Karta odebrána · ${removedMainRows} řádek z cenové kalkulace také smazán`);
+            }
           }
         }
       });
@@ -2996,6 +3073,49 @@
       const pct = parseFloat(el.dataset.pct) || 0;
       el.textContent = fmtKc(data.vyslednaVc * pct / 100);
     });
+    // Page 3 — propsat počet FV panelů z kalkulátoru do karty
+    const techTable = document.querySelector('[data-kalk-table="tech"]');
+    if (techTable) {
+      const firstRow = techTable.querySelector('tbody tr:first-child');
+      if (firstRow) {
+        const inputs = firstRow.querySelectorAll('input');
+        // 0 = label, 1 = počet, 2 = bez DPH
+        const pocet = inputs[1] ? (parseInt(inputs[1].value, 10) || 0) : 0;
+        const panelCard = document.querySelector('.card.card-panel');
+        if (panelCard && pocet > 0) {
+          panelCard.querySelectorAll('dl dt').forEach(dt => {
+            if (dt.textContent.trim().toLowerCase().startsWith('počet')) {
+              const dd = dt.nextElementSibling;
+              if (dd && dd.tagName === 'DD') dd.textContent = `${pocet} ks`;
+            }
+          });
+          // Také první řádek hlavní kalkulační tabulky (str. 4)
+          const mainTbody = document.querySelector('table[data-table="main"] tbody');
+          if (mainTbody) {
+            const firstMainRow = mainTbody.querySelector('tr');
+            const qtyCell = firstMainRow?.querySelector('.qty');
+            if (qtyCell && /trina|panel/i.test(firstMainRow.querySelector('td:nth-child(2)')?.textContent || '')) {
+              qtyCell.textContent = String(pocet);
+            }
+          }
+        }
+      }
+    }
+    // Optimizéry — počet z kalk řádku 5
+    const optimRow = techTable?.querySelectorAll('tbody tr')[4];
+    if (optimRow) {
+      const inputs = optimRow.querySelectorAll('input');
+      const pocet = inputs[0] ? (parseInt(inputs[0].value, 10) || 0) : 0;
+      const optCard = document.querySelector('.card.card-optimizer');
+      if (optCard && pocet > 0) {
+        optCard.querySelectorAll('dl dt').forEach(dt => {
+          if (dt.textContent.trim().toLowerCase().startsWith('počet')) {
+            const dd = dt.nextElementSibling;
+            if (dd && dd.tagName === 'DD') dd.textContent = `${pocet} ks`;
+          }
+        });
+      }
+    }
   };
 
   function bindKalkInputs() {
