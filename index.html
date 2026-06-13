@@ -11,13 +11,13 @@
 <style>
   :root {
     --dark:       #3C3C3C;   /* dark gray from BFT logo (TECHNOLOGY) */
-    --green:      #7CB342;   /* fresh green from BFT logo (BF) */
-    --yellow:     #F5A623;   /* yellow-orange from BFT logo (sun + panels) */
+    --green:      #8BB855;   /* exact green sampled from BFT logo (BF + panels) */
+    --yellow:     #FAB21A;   /* exact yellow sampled from BFT logo (sun rays) */
     /* Backwards-compatible aliases used throughout */
     --brand-dark: var(--dark);
     --brand:      var(--green);
     --accent:     var(--yellow);
-    --orange:     var(--yellow);   /* legacy alias kept for JS hover styles */
+    --orange:     var(--yellow);   /* legacy alias — points to BFT yellow, NOT orange */
     --text:       #4A4A4A;
     --black:      #222222;
     --cream:      #F5F8F0;   /* very light green-tinted gray */
@@ -250,8 +250,11 @@
   .cards {
     margin-top: 14px;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 1fr;       /* všechny karty stejně vysoké */
+    gap: 8px;
+    flex: 1 1 auto;            /* vyplní zbylou vertikální plochu stránky */
+    align-items: stretch;
   }
   .card {
     background: var(--cream);
@@ -269,9 +272,19 @@
   }
   .card .brand-name {
     text-align: center;
-    padding: 8px 6px 0;
+    padding: 0 6px;
+    margin-top: 8px;
+    height: 20pt;                 /* PEVNĚ (absolutní pt — aby zelená čára byla na stejné výšce) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 12pt; font-weight: 700;
+    line-height: 1;
     color: var(--black);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
   }
   .card .brand-model {
     text-align: center;
@@ -282,12 +295,12 @@
     margin: 0 14px;
   }
   .card dl {
-    margin: 8px 0 12px; padding: 0;
+    margin: 6px 0 8px; padding: 0;
     text-align: center;
   }
   .card dt {
     font-size: 8pt; color: var(--text);
-    margin-top: 6px;
+    margin-top: 4px;
   }
   .card dd {
     font-size: 10pt; font-weight: 700; color: var(--brand-dark);
@@ -383,8 +396,17 @@
   .pay-card .top .pct {
     font-size: 18pt; font-weight: 900; margin-left: 8px;
   }
+  .pay-card .pay-amount {
+    text-align: center;
+    padding: 8px 14px 0;
+    font-size: 14pt;
+    font-weight: 700;
+    color: var(--brand);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
   .pay-card .body {
-    padding: 12px 16px;
+    padding: 10px 16px 14px;
     font-size: 10pt;
     color: var(--text);
   }
@@ -509,7 +531,7 @@
     -webkit-text-fill-color: var(--black) !important;
   }
   [contenteditable="true"]:hover:not(:focus) {
-    box-shadow: inset 0 0 0 1px rgba(124,179,66,.3);
+    box-shadow: inset 0 0 0 1px rgba(139,184,85,.3);
   }
 
   /* ============= TITLE PAGE (page 0) ============= */
@@ -554,7 +576,7 @@
   .title-page .middle { flex: 0 0 auto; }
   .title-page .bottom-block { margin-top: auto; display: flex; flex-direction: column; gap: 24px; }
   .title-page .top-row .logo-white {
-    height: 3.2cm;
+    height: 2.4cm;
     filter: drop-shadow(0 4px 12px rgba(0,0,0,0.35));
   }
   .title-page .top-row .corner {
@@ -616,6 +638,30 @@
   }
   .title-page .bottom-row .left b,
   .title-page .bottom-row .right b { font-weight: 700; }
+  .title-page .title-socials {
+    display: flex; align-items: center; gap: 10px;
+    margin-top: 8px;
+    font-size: 9pt; font-weight: 500;
+  }
+  .title-page .title-socials a {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: rgba(255,255,255,0.95);
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.14);
+    transition: background .15s, transform .15s;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.45);
+  }
+  .title-page .title-socials a:hover {
+    background: rgba(255,255,255,0.28);
+    transform: translateY(-1px);
+  }
+  .title-page .title-socials a svg { flex-shrink: 0; }
+  .title-page .title-socials .dot {
+    color: rgba(255,255,255,0.45);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.45);
+  }
   .title-page .upload-hint {
     position: absolute; bottom: 12px; right: 12px; z-index: 3;
     background: rgba(0,0,0,0.5);
@@ -633,10 +679,10 @@
   .card .product-photo {
     margin-top: auto;
     border-top: 1px solid rgba(60,60,60,0.15);
-    padding: 8px;
+    padding: 5px;
     cursor: pointer;
     background: #fff;
-    height: 4.5cm;            /* FIXED — neskáče, ať je fotka jakákoliv */
+    height: 7.5cm;            /* FIXED — všechny fotky jsou shodně velké */
     flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
@@ -653,6 +699,160 @@
   }
   .card .product-photo input[type="file"] { display: none; }
   .card .product-photo .placeholder { display: block; }
+
+  /* --- Per-card photo tweaks --- */
+  /* FV panel — méně paddingu, contain (žádný ořez, jen vyplnit box co aspekt dovolí) */
+  .card.card-panel .product-photo { padding: 4px; background: #fff; }
+  .card.card-panel .product-photo img {
+    object-fit: contain;
+    width: 100%; height: 100%;
+  }
+  /* Střídač — vyvážený padding (cca o 20 % větší než dřív) */
+  .card.card-stridac .product-photo { padding: 8px 12px; }
+  .card.card-stridac .product-photo img {
+    max-width: 95%; max-height: 100%;
+    width: auto; height: auto;
+    margin: auto;
+  }
+  /* Baterie — větší (o cca 20 % oproti default contain) */
+  .card.card-baterie .product-photo { padding: 3px; }
+  .card.card-baterie .product-photo img {
+    transform: scale(1.18);
+    transform-origin: center;
+  }
+  /* Rozsah prací — del / add (řádek v .scope) */
+  .scope > div {
+    position: relative;
+    padding-right: 28px;
+  }
+  .scope > div .del-scope {
+    position: absolute; top: 50%; right: 4px;
+    transform: translateY(-50%);
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(60,60,60,0.25); color: #fff; border: 0;
+    cursor: pointer; font-size: 10px; line-height: 1;
+    font-family: inherit; font-weight: 700;
+    opacity: 0; transition: opacity .15s;
+    z-index: 5;
+  }
+  .scope > div:hover .del-scope { opacity: 1; }
+  .scope > div .del-scope:hover { background: var(--accent); color: var(--brand-dark); }
+  .add-scope {
+    background: var(--brand-dark); color: #fff;
+    border: 0; padding: 6px 16px; border-radius: 4px;
+    font-family: inherit; font-size: 10pt; font-weight: 500;
+    cursor: pointer; margin-top: 8px;
+  }
+  .add-scope:hover { background: var(--accent); color: var(--brand-dark); }
+
+  /* Karty technologií — odebrání jednotlivého dt+dd řádku */
+  .card dl dd { position: relative; padding-right: 14px; }
+  .card dl dd .del-dl {
+    position: absolute; right: -2px; top: 50%;
+    transform: translateY(-50%);
+    width: 16px; height: 16px; border-radius: 50%;
+    background: rgba(60,60,60,0.25); color: #fff; border: 0;
+    font-size: 9px; cursor: pointer; line-height: 1;
+    font-family: inherit; font-weight: 700;
+    opacity: 0; transition: opacity .15s;
+    z-index: 5;
+  }
+  .card dl dt:hover + dd .del-dl,
+  .card dl dd:hover .del-dl { opacity: 1; }
+  .card dl dd .del-dl:hover { background: var(--accent); color: var(--brand-dark); }
+
+  /* Page number badge — bottom-right, subtle */
+  .page .page-num {
+    position: absolute;
+    bottom: 0.45cm;
+    right: 0.7cm;
+    font-size: 8pt;
+    color: rgba(120,120,120,0.7);
+    letter-spacing: 0.08em;
+    font-weight: 500;
+    pointer-events: none;
+    z-index: 10;
+    user-select: none;
+  }
+  .title-page .page-num {
+    color: rgba(255,255,255,0.55);
+    bottom: 0.6cm; right: 1cm;
+  }
+
+  /* Technology cards — odebrání karty (X v rohu při hoveru) */
+  .cards .card { position: relative; }
+  .cards .card .del-card {
+    position: absolute; top: 6px; right: 6px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(60,60,60,0.35); color: #fff; border: 0;
+    cursor: pointer; font-size: 11px; line-height: 1;
+    font-family: inherit; font-weight: 700;
+    opacity: 0; transition: opacity .15s, background .15s;
+    z-index: 5;
+  }
+  .cards .card:hover .del-card { opacity: 1; }
+  .cards .card .del-card:hover { background: var(--accent); color: var(--brand-dark); }
+
+  /* Konstrukce — type selector ve stylu brand-name (BEZ podtržítka, jen šipka) */
+  .card.card-konstrukce .brand-select {
+    display: block;
+    margin: 8px 4px 0;
+    width: calc(100% - 8px);
+    height: 20pt;                 /* PEVNĚ (absolutní pt — shodná výška s .brand-name) */
+    text-align: center;
+    text-align-last: center;
+    padding: 0 16px 0 2px;
+    font-family: inherit;
+    font-size: 10.5pt; font-weight: 700;     /* sníženo z 12pt aby se vešlo "Zátěžová konstrukce" */
+    line-height: 1;
+    color: var(--black);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%238BB855' d='M5 6L0 0h10z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 3px center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+  }
+  .card.card-konstrukce .brand-select:hover { color: var(--brand); }
+  .card.card-konstrukce .brand-select:focus {
+    outline: none;
+    color: var(--brand);
+  }
+  .card.card-konstrukce .brand-select option {
+    font-size: 11pt; font-weight: 500; color: var(--black);
+    background: #fff; text-align: left;
+  }
+  /* Spacer kde u ostatních karet je brand-model — zachová stejnou výšku karty + zelený underline */
+  .card.card-konstrukce .brand-model-spacer,
+  .card.card-optimizer .brand-model-spacer {
+    height: 9pt;                 /* shodná řádka jako brand-model font-size */
+    padding: 0 6px 8px;
+    margin: 0 14px;
+    border-bottom: 2px solid var(--brand);
+  }
+  /* Hidden state when STOP tlačítko = "není" */
+  .card.card-optimizer.card-hidden { display: none !important; }
+
+  /* Print fit — "Zátěžová konstrukce" je dlouhý text, na úzkou kartu se nevejde s 12pt */
+  @media print {
+    .card.card-konstrukce .brand-select,
+    .card.card-optimizer .brand-name {
+      font-size: 9.5pt;
+      padding-left: 0;
+      padding-right: 12px;
+    }
+    .card.card-konstrukce .brand-select {
+      background-position: right 1px center;
+      margin: 6px 2px 0;
+      width: calc(100% - 4px);
+    }
+  }
 
   /* ============= EDITING UI: add/remove row + remove card ============= */
   table.items tbody tr { position: relative; }
@@ -710,6 +910,439 @@
   .hero-right.photo-slot:hover::after { opacity: 1; }
   .hero-right.photo-slot input[type="file"] { display: none; }
 
+  /* ============= FORM SCREEN (page 0, screen-only) ============= */
+  .form-screen {
+    width: 29.7cm;
+    max-width: 100%;
+    margin: 20px auto;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+    padding: 1.5cm 1.8cm;
+    font-family: 'Roboto', Arial, sans-serif;
+    color: var(--black);
+  }
+  .form-screen .form-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 18px;
+    margin-bottom: 20px;
+    border-bottom: 4px solid var(--brand);
+  }
+  .form-screen .form-hero h1 {
+    margin: 0;
+    font-size: 26pt;
+    font-weight: 700;
+    color: var(--brand-dark);
+    line-height: 1.15;
+  }
+  .form-screen .form-hero h1 small {
+    display: block;
+    font-size: 11pt;
+    font-weight: 400;
+    color: #888;
+    margin-top: 6px;
+    font-style: italic;
+  }
+  .form-screen .form-hero .draft-info {
+    text-align: right;
+    font-size: 11pt;
+    color: #666;
+  }
+  .form-screen .form-hero .draft-info strong { color: var(--brand); display: block; font-size: 13pt; }
+
+  .form-screen .form-section {
+    margin-bottom: 24px;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 16px 20px;
+    background: #fafafa;
+  }
+  .form-screen .form-section h2 {
+    margin: 0 0 12px 0;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--brand);
+    font-size: 13pt;
+    color: var(--brand-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .form-screen .form-section .desc {
+    font-size: 9.5pt;
+    color: #888;
+    margin-top: -8px;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  .form-screen .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 18px;
+  }
+  .form-screen .form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-screen .form-grid.cols-1 { grid-template-columns: 1fr; }
+
+  .form-screen .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .form-screen .form-field label {
+    font-size: 9pt;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--brand-dark);
+  }
+  .form-screen .form-field input,
+  .form-screen .form-field textarea,
+  .form-screen .form-field select {
+    border: 1px solid #d1d1d1;
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 11pt;
+    color: var(--black);
+    background: #fff;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .form-screen .form-field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%238BB855' d='M5 6L0 0h10z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 30px;
+    cursor: pointer;
+  }
+  .form-screen .form-field input:focus,
+  .form-screen .form-field textarea:focus,
+  .form-screen .form-field select:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(139, 184, 85, 0.2);
+  }
+  .form-screen .form-field input[readonly] {
+    background: #f3f3f3;
+    color: #555;
+    cursor: not-allowed;
+  }
+  .form-screen .form-field input.manual {
+    background: #fffdf2;
+    color: var(--black);
+    cursor: text;
+  }
+  .form-screen .form-field .label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .form-screen .form-field .label-row label { margin: 0; }
+  .form-screen .form-field .manual-toggle {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 9pt; font-weight: 400; text-transform: none;
+    letter-spacing: 0; color: #666; cursor: pointer;
+  }
+  .form-screen .form-field .manual-toggle input[type="checkbox"] {
+    margin: 0; width: 14px; height: 14px;
+    accent-color: var(--brand);
+    cursor: pointer;
+  }
+  .form-screen .form-field .cislo-row {
+    display: flex; gap: 8px; align-items: stretch;
+  }
+  .form-screen .form-field .cislo-row input { flex: 1; min-width: 0; }
+  .form-screen .form-field .cislo-row button {
+    background: var(--accent); color: var(--brand-dark);
+    border: 0; padding: 0 14px; border-radius: 4px;
+    font-family: inherit; font-size: 10.5pt; font-weight: 700;
+    cursor: pointer; white-space: nowrap;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .form-screen .form-field .cislo-row button:hover {
+    background: var(--brand); color: #fff;
+  }
+  .form-screen .form-field .cislo-row button:active { transform: scale(0.97); }
+  .form-screen .form-field textarea {
+    min-height: 60px;
+    resize: vertical;
+  }
+  .form-screen .form-field .hint {
+    font-size: 8.5pt;
+    color: #999;
+    font-style: italic;
+  }
+
+  .form-screen .form-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 20px 0 4px 0;
+    border-top: 1px solid #e5e5e5;
+    margin-top: 16px;
+  }
+  .form-screen .form-actions .left-actions {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+  }
+  .form-screen .form-actions button {
+    background: var(--brand);
+    color: #fff;
+    border: 0;
+    padding: 12px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12pt;
+    font-weight: 600;
+    font-family: inherit;
+  }
+  .form-screen .form-actions button:hover { background: var(--brand-dark); }
+  .form-screen .form-actions button.secondary {
+    background: #555;
+  }
+  .form-screen .form-actions button.secondary:hover { background: #333; }
+  .form-screen .form-actions button.ghost {
+    background: transparent;
+    color: var(--brand-dark);
+    border: 1.5px solid var(--brand-dark);
+  }
+  .form-screen .form-actions button.ghost:hover { background: var(--brand-dark); color: #fff; }
+
+  @media print {
+    .form-screen { display: none !important; }
+  }
+
+  /* ============= KALKULÁTOR SCREEN (page 0b, screen-only) ============= */
+  .kalkulator-screen {
+    width: 29.7cm;
+    max-width: 100%;
+    margin: 20px auto;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25);
+    padding: 1.5cm 1.8cm;
+    font-family: 'Roboto', Arial, sans-serif;
+    color: var(--black);
+  }
+  .kalkulator-screen .kalk-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 18px;
+    margin-bottom: 24px;
+    border-bottom: 4px solid var(--brand);
+  }
+  .kalkulator-screen .kalk-hero h1 {
+    margin: 0;
+    font-size: 24pt;
+    font-weight: 700;
+    color: var(--brand-dark);
+    line-height: 1.15;
+  }
+  .kalkulator-screen .kalk-hero h1 small {
+    display: block;
+    font-size: 10.5pt;
+    font-weight: 400;
+    color: #888;
+    margin-top: 6px;
+    font-style: italic;
+  }
+  .kalkulator-screen .kalk-hero .kalk-summary-box {
+    display: flex; flex-direction: column; gap: 4px;
+    text-align: right; font-size: 10pt; color: #666;
+  }
+  .kalkulator-screen .kalk-hero .kalk-summary-box .total {
+    font-size: 22pt; font-weight: 700; color: var(--brand);
+    line-height: 1;
+  }
+  .kalkulator-screen .kalk-hero .kalk-summary-box .marge {
+    font-size: 10pt; color: #777;
+  }
+
+  .kalkulator-screen .kalk-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .kalkulator-screen .form-section {
+    margin-bottom: 18px;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 12px 16px;
+    background: #fafafa;
+  }
+  .kalkulator-screen .form-section h2 {
+    margin: 0 0 10px 0;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--brand);
+    font-size: 11pt;
+    color: var(--brand-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .kalkulator-screen .kalk-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10pt;
+  }
+  .kalkulator-screen .kalk-table th,
+  .kalkulator-screen .kalk-table td {
+    padding: 5px 6px;
+    border-bottom: 1px solid #eee;
+    text-align: right;
+  }
+  .kalkulator-screen .kalk-table th {
+    color: var(--brand);
+    font-weight: 600;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: right;
+    background: transparent;
+  }
+  .kalkulator-screen .kalk-table th:first-child,
+  .kalkulator-screen .kalk-table td:first-child { text-align: left; }
+  .kalkulator-screen .kalk-table tbody td input[type="text"],
+  .kalkulator-screen .kalk-table tbody td input[type="number"] {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 10pt;
+    color: var(--black);
+    padding: 2px 4px;
+    text-align: right;
+    border-radius: 3px;
+  }
+  .kalkulator-screen .kalk-table tbody td input[type="text"] { text-align: left; font-weight: 500; }
+  .kalkulator-screen .kalk-table tbody td input:focus,
+  .kalkulator-screen .kalk-table tbody td select:focus {
+    outline: none;
+    background: #f3faea;
+    box-shadow: 0 0 0 2px var(--brand) inset;
+  }
+  .kalkulator-screen .kalk-table tbody td select[data-kalk-optimizer] {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 10pt;
+    color: var(--black);
+    padding: 2px 18px 2px 4px;
+    text-align: left;
+    font-weight: 500;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%238BB855' d='M5 6L0 0h10z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    border-radius: 3px;
+  }
+  .kalkulator-screen .kalk-table tbody td.auto {
+    color: #777; font-style: italic;
+  }
+  .kalkulator-screen .kalk-table tfoot td {
+    font-weight: 700; color: var(--brand-dark);
+    border-top: 2px solid var(--brand);
+    border-bottom: 0;
+    padding-top: 7px;
+  }
+  /* Zákazník (yellow) row — highlighted "cena pro zákazníka" */
+  .kalkulator-screen .kalk-zakaznik-row {
+    background: rgba(250, 178, 26, 0.18);
+    border-radius: 4px;
+    margin-top: 6px;
+    padding: 8px 10px;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 10px;
+  }
+  .kalkulator-screen .kalk-zakaznik-row label {
+    font-size: 10pt; font-weight: 700; color: var(--brand-dark);
+  }
+  .kalkulator-screen .kalk-zakaznik-row input {
+    width: 110px;
+    border: 1px solid #d1d1d1;
+    border-radius: 4px;
+    padding: 5px 8px;
+    font-family: inherit;
+    font-size: 11pt;
+    font-weight: 700;
+    text-align: right;
+    color: var(--black);
+    background: #fff;
+  }
+  .kalkulator-screen .kalk-zakaznik-row input:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(139, 184, 85, 0.2);
+  }
+  .kalkulator-screen .kalk-zakaznik-row .auto {
+    font-size: 9pt; color: #777; font-style: italic;
+    white-space: nowrap;
+  }
+
+  /* Souhrn table — final results */
+  .kalkulator-screen .kalk-souhrn {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10pt;
+  }
+  .kalkulator-screen .kalk-souhrn td {
+    padding: 5px 8px;
+    border-bottom: 1px solid #eee;
+  }
+  .kalkulator-screen .kalk-souhrn td:nth-child(2),
+  .kalkulator-screen .kalk-souhrn td:nth-child(3) { text-align: right; font-variant-numeric: tabular-nums; }
+  .kalkulator-screen .kalk-souhrn .row-total td {
+    font-weight: 700; border-top: 2px solid var(--brand);
+    background: rgba(139,184,85,0.08);
+  }
+  .kalkulator-screen .kalk-souhrn .row-final td {
+    font-weight: 700; font-size: 12pt;
+    background: rgba(250, 178, 26, 0.22);
+    color: var(--brand-dark);
+  }
+  .kalkulator-screen .kalk-souhrn .row-sleva td { color: #c04040; }
+  .kalkulator-screen .kalk-souhrn td.col-label { font-weight: 500; }
+
+  /* Marže table */
+  .kalkulator-screen .kalk-marze-tbl td {
+    padding: 5px 8px;
+    border-bottom: 1px solid #eee;
+  }
+  .kalkulator-screen .kalk-marze-tbl td:nth-child(2) { text-align: right; font-variant-numeric: tabular-nums; }
+  .kalkulator-screen .kalk-marze-tbl input {
+    width: 100px;
+    border: 1px solid #d1d1d1;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-family: inherit;
+    font-size: 10pt;
+    text-align: right;
+    background: #fff;
+  }
+  .kalkulator-screen .kalk-marze-tbl input:focus {
+    outline: none; border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(139,184,85,0.2);
+  }
+  .kalkulator-screen .kalk-marze-tbl .row-cisty-zisk td {
+    font-weight: 700; font-size: 11pt;
+    background: rgba(139,184,85,0.18);
+    color: var(--brand-dark);
+    border-top: 2px solid var(--brand);
+  }
+
+  @media print {
+    .kalkulator-screen { display: none !important; }
+  }
+
   /* ============= PRINT ============= */
   @page {
     size: A4 landscape;
@@ -753,11 +1386,270 @@
 <!-- =========================== TOOLBAR =========================== -->
 <div class="toolbar no-print">
   <h3>BF Technology · Cenová nabídka FVE</h3>
-  <span class="hint">Vyplň pole nahoře, hodnoty se propíší do záhlaví všech stran.</span>
+  <span class="hint" id="save-status">Vyplň pole, hodnoty se automaticky ukládají.</span>
   <span class="sep"></span>
+  <button class="secondary" onclick="scrollToForm()">📝 Vyplnit nabídku</button>
+  <button class="secondary" onclick="scrollToKalk()" title="Vnitřní kalkulace nákladů a marže">🧮 Kalkulátor</button>
+  <button class="secondary" onclick="scrollToPreview()">👁 Náhled</button>
+  <button class="secondary" onclick="autoloadImages()" title="Automaticky napáruje fotky z /img/ na karty podle značky a kategorie">📷 Najít fotky</button>
+  <button class="secondary" onclick="downloadJSON()">💾 Uložit nabídku</button>
+  <button class="secondary" onclick="loadFromFile()">📂 Načíst nabídku</button>
   <button onclick="window.print()">🖨️ Export do PDF</button>
   <button class="secondary" onclick="resetAll()">↺ Reset</button>
+  <input type="file" id="load-json-input" accept="application/json" style="display:none">
 </div>
+
+<!-- =========================== FORM SCREEN (page 0, screen-only) =========================== -->
+<section class="form-screen no-print" id="form-screen">
+  <div class="form-hero">
+    <h1>
+      Vyplnit nabídku
+      <small>Hodnoty se propíší do titulní strany i záhlaví všech stran. Vše se průběžně ukládá.</small>
+    </h1>
+    <div class="draft-info">
+      <strong id="draft-title">932621</strong>
+      <span id="draft-saved-at">— rozpracovaný koncept</span>
+    </div>
+  </div>
+
+  <!-- ZÁKLADNÍ ÚDAJE -->
+  <div class="form-section">
+    <h2>1 · Základní údaje nabídky</h2>
+    <p class="desc">Číslo kalkulace, datum vystavení a platnost. Tyto údaje jsou na titulní straně i v záhlaví všech stran.</p>
+    <div class="form-grid cols-3">
+      <div class="form-field">
+        <div class="label-row">
+          <label>Kalkulace č.</label>
+          <label class="manual-toggle">
+            <input type="checkbox" id="cislo-manual">
+            zadat ručně
+          </label>
+        </div>
+        <div class="cislo-row">
+          <input type="text" data-field="cislo" data-form="1" value="" readonly placeholder="bude vygenerováno…">
+          <button type="button" id="cislo-gen-btn" onclick="generateCislo()" title="Vygenerovat nové 8místné číslo">🎲 Vygenerovat</button>
+        </div>
+        <span class="hint">8místné unikátní číslo — automaticky se vygeneruje, nebo zaškrtni „zadat ručně"</span>
+      </div>
+      <div class="form-field">
+        <div class="label-row">
+          <label>Datum vystavení</label>
+          <label class="manual-toggle">
+            <input type="checkbox" id="datum-manual">
+            zadat ručně
+          </label>
+        </div>
+        <input type="text" data-field="datum" data-form="1" value="" readonly placeholder="dnešní datum">
+        <span class="hint">Automaticky <strong>dnešní datum</strong> — zaškrtni „zadat ručně" pro úpravu (formát: 9. 3. 2026)</span>
+      </div>
+      <div class="form-field">
+        <div class="label-row">
+          <label>Platnost nabídky do</label>
+          <label class="manual-toggle">
+            <input type="checkbox" id="platnost-manual">
+            zadat ručně
+          </label>
+        </div>
+        <input type="text" data-field="platnost" data-form="1" value="" readonly placeholder="auto +30 dní">
+        <span class="hint">Automaticky <strong>+30 dní</strong> od data vystavení — zaškrtni „zadat ručně" pro úpravu</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJEKT -->
+  <div class="form-section">
+    <h2>2 · Projekt</h2>
+    <p class="desc">Komu je nabídka určena a co je předmětem.</p>
+    <div class="form-grid">
+      <div class="form-field">
+        <label>Odběratel</label>
+        <input type="text" data-field="odberatel" data-form="1" value="[Jméno / firma odběratele]">
+        <span class="hint">Název firmy nebo jméno zákazníka</span>
+      </div>
+      <div class="form-field">
+        <label>Adresa / objekt</label>
+        <input type="text" data-field="objekt" data-form="1" value="Varnsdorf">
+        <span class="hint">Adresa instalace (např. Varnsdorf)</span>
+      </div>
+      <div class="form-field">
+        <label>Výkon FVE</label>
+        <input type="text" data-field="vykon" data-form="1" value="9,9 kWp">
+        <span class="hint">Včetně jednotky, např. 9,9 kWp</span>
+      </div>
+      <div class="form-field">
+        <label>Sazba DPH (%)</label>
+        <select data-field="dph" data-form="1">
+          <option value="0">0 % — bez DPH</option>
+          <option value="12" selected>12 % — FVE pro RD</option>
+          <option value="21">21 % — standardní sazba</option>
+        </select>
+        <span class="hint">0 % (bez DPH), 12 % (RD s FVE), 21 % (běžná sazba)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DALŠÍ ÚPRAVY -->
+  <div class="form-section">
+    <h2>3 · Detailní úpravy</h2>
+    <p class="desc">
+      Dodavatel, kontakty, popisy variant, položkový rozpočet, technologie, rozsah prací, platební
+      podmínky atd. se upravují přímo na příslušných stranách náhledu — všechny texty jsou klikatelné
+      (contenteditable). Najetí myší na kartu / řádek / krok ukáže <strong>✕</strong> pro odebrání.
+    </p>
+  </div>
+
+  <!-- AKCE -->
+  <div class="form-actions">
+    <div class="left-actions">
+      <button onclick="scrollToPreview()">👁 Pokračovat na náhled</button>
+      <button onclick="autoloadImages()" class="ghost" title="Napáruje fotky z /img/ na karty technologií podle značky">📷 Najít fotky z /img</button>
+      <button onclick="window.print()">🖨 Tisk / PDF</button>
+    </div>
+    <button class="secondary" onclick="downloadJSON()">💾 Uložit nabídku do souboru</button>
+    <button class="secondary" onclick="loadFromFile()">📂 Načíst nabídku ze souboru</button>
+  </div>
+</section>
+
+<!-- =========================== KALKULÁTOR (page 0b, screen-only, internal) =========================== -->
+<section class="kalkulator-screen no-print" id="kalkulator-screen">
+  <div class="kalk-hero">
+    <h1>
+      Kalkulátor nabídky
+      <small>Vnitřní kalkulace nákladů, marže a čistého zisku — výsledek se automaticky propíše do veřejné nabídky.</small>
+    </h1>
+    <div class="kalk-summary-box">
+      <span>Výsledná cena vč. DPH</span>
+      <span class="total" id="kalk-hero-total">0 Kč</span>
+      <span class="marge">Marže bez DPH: <strong id="kalk-hero-marze">0 Kč</strong> · Čistý zisk: <strong id="kalk-hero-zisk">0 Kč</strong></span>
+    </div>
+  </div>
+
+  <div class="kalk-grid">
+    <!-- LEFT — Nákladové vstupy + sazba -->
+    <div>
+      <!-- TECHNOLOGIE — náklady -->
+      <div class="form-section">
+        <h2>1 · Technologie — nákladová cena</h2>
+        <table class="kalk-table" data-kalk-table="tech">
+          <thead>
+            <tr><th>Položka</th><th>Počet</th><th>Bez DPH</th><th>Vč. DPH</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><input type="text" value="FV panely"></td><td><input type="number" value="16" step="1"></td><td><input type="number" data-kalk-bez value="42000" step="100"></td><td class="auto" data-kalk-vc>0</td></tr>
+            <tr><td><input type="text" value="Střídač"></td><td><input type="number" value="1" step="1"></td><td><input type="number" data-kalk-bez value="23000" step="100"></td><td class="auto" data-kalk-vc>0</td></tr>
+            <tr><td><input type="text" value="Baterie"></td><td><input type="number" value="1" step="1"></td><td><input type="number" data-kalk-bez value="92000" step="100"></td><td class="auto" data-kalk-vc>0</td></tr>
+            <tr><td><input type="text" value="Wallbox"></td><td><input type="number" value="1" step="1"></td><td><input type="number" data-kalk-bez value="9000" step="100"></td><td class="auto" data-kalk-vc>0</td></tr>
+            <tr><td><select data-kalk-optimizer><option value="none" selected>STOP tlačítko · není (bez modulu)</option><option value="TS4-A-2F">STOP tlačítko · TS4-A-2F (jen rapid shutdown)</option><option value="TS4-A-O">Optimizer · TS4-A-O (s RSS)</option><option value="TS4-X-O">Optimizer · TS4-X-O (X-series + RSS)</option></select></td><td><input type="number" value="16" step="1"></td><td><input type="number" data-kalk-bez value="13000" step="100"></td><td class="auto" data-kalk-vc>0</td></tr>
+          </tbody>
+          <tfoot>
+            <tr><td colspan="2">Celkem náklady</td><td data-kalk-cat-bez="tech">0</td><td data-kalk-cat-vc="tech">0</td></tr>
+          </tfoot>
+        </table>
+        <div class="kalk-zakaznik-row">
+          <label>Cena pro zákazníka (vč. DPH)</label>
+          <input type="number" id="kalk-tech-zak" value="269000" step="100">
+          <span class="auto">bez DPH: <strong id="kalk-tech-zak-bez">0</strong> Kč</span>
+        </div>
+      </div>
+
+      <!-- KONSTRUKCE — náklady -->
+      <div class="form-section">
+        <h2>2 · Konstrukce a elektromateriál — nákladová cena</h2>
+        <table class="kalk-table" data-kalk-table="konstr">
+          <thead>
+            <tr><th>Položka</th><th>Počet</th><th>Bez DPH</th><th>Vč. DPH</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><input type="text" value="Konstrukce"></td><td><input type="number" value="1" step="1"></td><td><input type="number" data-kalk-bez value="37000" step="100"></td><td class="auto" data-kalk-vc>0</td></tr>
+            <tr><td><input type="text" value="Rozvaděč"></td><td><input type="number" value="1" step="1"></td><td><input type="number" data-kalk-bez value="20000" step="100"></td><td class="auto" data-kalk-vc>0</td></tr>
+            <tr><td><input type="text" value="Kabeláž"></td><td><input type="number" value="1" step="1"></td><td><input type="number" data-kalk-bez value="18000" step="100"></td><td class="auto" data-kalk-vc>0</td></tr>
+          </tbody>
+          <tfoot>
+            <tr><td colspan="2">Celkem náklady</td><td data-kalk-cat-bez="konstr">0</td><td data-kalk-cat-vc="konstr">0</td></tr>
+          </tfoot>
+        </table>
+        <div class="kalk-zakaznik-row">
+          <label>Cena pro zákazníka (vč. DPH)</label>
+          <input type="number" id="kalk-konstr-zak" value="116800" step="100">
+          <span class="auto">bez DPH: <strong id="kalk-konstr-zak-bez">0</strong> Kč</span>
+        </div>
+      </div>
+
+      <!-- PRÁCE -->
+      <div class="form-section">
+        <h2>3 · Práce, montáž a doprava — cena pro zákazníka</h2>
+        <div class="kalk-zakaznik-row">
+          <label>Bez DPH</label>
+          <input type="number" id="kalk-prace-bez" value="69000" step="100">
+          <span class="auto">vč. DPH: <strong id="kalk-prace-vc">0</strong> Kč</span>
+        </div>
+      </div>
+
+      <!-- SLEVA -->
+      <div class="form-section">
+        <h2>4 · Sleva (vč. DPH)</h2>
+        <div class="kalk-zakaznik-row">
+          <label>Poskytnutá sleva</label>
+          <input type="number" id="kalk-sleva-vc" value="5000" step="100">
+          <span class="auto">bez DPH: <strong id="kalk-sleva-bez">0</strong> Kč</span>
+        </div>
+      </div>
+
+      <!-- DOTACE -->
+      <div class="form-section">
+        <h2>5 · Dotace NZÚ (odečte se z výsledné ceny)</h2>
+        <div class="kalk-zakaznik-row">
+          <label>Předpokládaná dotace</label>
+          <input type="number" id="kalk-dotace" value="0" step="100">
+          <span class="auto">odečte se před výpočtem výsledné ceny</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT — Souhrn pro zákazníka + marže/zisk -->
+    <div>
+      <!-- SOUHRN PRO ZÁKAZNÍKA -->
+      <div class="form-section">
+        <h2>Celkem Kč — zákazník</h2>
+        <table class="kalk-souhrn">
+          <thead><tr><td></td><th style="text-align:right;color:var(--brand);font-size:9pt;text-transform:uppercase">Bez DPH</th><th style="text-align:right;color:var(--brand);font-size:9pt;text-transform:uppercase">Vč. DPH</th></tr></thead>
+          <tbody>
+            <tr><td class="col-label">Materiál (technologie + konstrukce)</td><td id="kalk-mat-bez">0</td><td id="kalk-mat-vc">0</td></tr>
+            <tr><td class="col-label">Montáž / práce</td><td id="kalk-prace-souhrn-bez">0</td><td id="kalk-prace-souhrn-vc">0</td></tr>
+            <tr class="row-sleva"><td class="col-label">Sleva</td><td id="kalk-sleva-souhrn-bez">0</td><td id="kalk-sleva-souhrn-vc">0</td></tr>
+            <tr class="row-total"><td class="col-label">Fakturace</td><td id="kalk-fakt-bez">0</td><td id="kalk-fakt-vc">0</td></tr>
+            <tr><td class="col-label">Dotace</td><td>—</td><td id="kalk-dotace-display">0</td></tr>
+            <tr class="row-final"><td class="col-label">Výsledná cena</td><td>—</td><td id="kalk-vysledna">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- MARŽE A ČISTÝ ZISK -->
+      <div class="form-section">
+        <h2>Marže a čistý zisk (interní)</h2>
+        <table class="kalk-marze-tbl">
+          <tbody>
+            <tr><td>Marže bez DPH</td><td id="kalk-marze">0</td></tr>
+            <tr><td colspan="2" style="font-size:9.5pt;color:#888;padding-top:8px;font-style:italic;">Provozní náklady (odečítané od marže):</td></tr>
+            <tr><td>BFA, BFE vč. odvodů</td><td><input type="number" id="kalk-bfa" value="40000" step="500"></td></tr>
+            <tr><td>Revize</td><td><input type="number" id="kalk-revize" value="2500" step="100"></td></tr>
+            <tr><td>Provozní náklady celkem</td><td id="kalk-naklady-total">0</td></tr>
+            <tr class="row-cisty-zisk"><td>Čistý zisk BF Technology</td><td id="kalk-cisty-zisk">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- AKCE -->
+      <div class="form-actions">
+        <div class="left-actions">
+          <button onclick="scrollToForm()">⟵ Zpět na vyplnění nabídky</button>
+          <button onclick="scrollToPreview()">👁 Náhled nabídky</button>
+        </div>
+        <button class="secondary" onclick="propagateKalkToOffer()">↓ Propsat do nabídky ručně</button>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- =========================== PAGE 0 — TITLE PAGE =========================== -->
 <section class="page title-page">
@@ -782,7 +1674,20 @@
     </div>
     <div class="bottom-block">
       <div class="bottom-row">
-        <div class="left"><b>BF Technology s. r. o.</b> &nbsp;·&nbsp; info@bftechnology.cz &nbsp;·&nbsp; www.bftechnology.cz</div>
+        <div class="left">
+          <b>BF Technology s. r. o.</b> &nbsp;·&nbsp; info@bftechnology.cz &nbsp;·&nbsp; www.bftechnology.cz
+          <div class="title-socials">
+            <a href="https://www.instagram.com/bftechnology_sro/" target="_blank" rel="noopener" title="Instagram BF Technology">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63 3.35.94 2.68 1.35 2.01 2.01 1.35 2.68.94 3.35.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.07 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.79-.31 1.46-.72 2.13-1.38.66-.67 1.07-1.34 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zm0 10.16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.85-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg>
+              @bftechnology_sro
+            </a>
+            <span class="dot">·</span>
+            <a href="https://www.facebook.com/BFtechnologyCZ" target="_blank" rel="noopener" title="Facebook BF Technology">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.5h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.69.24 2.69.24v2.97h-1.52c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.5h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>
+              BFtechnologyCZ
+            </a>
+          </div>
+        </div>
         <div class="right">Vystaveno <b data-field="datum">9. 3. 2026</b> &nbsp;·&nbsp; Platnost do <b data-field="platnost">23. 3. 2026</b></div>
       </div>
       <div class="meta-grid">
@@ -834,50 +1739,18 @@
     </div>
   </div>
 
-  <div class="fields-panel">
-    <div class="panel-caption">
-      ÚDAJE NABÍDKY <span class="hint">— vyplňte níže, hodnoty se automaticky propíší do záhlaví všech stran</span>
-    </div>
-    <div class="fields-grid">
-      <div class="field">
-        <label>Kalkulace č.</label>
-        <input type="text" data-field="cislo" value="932621">
-      </div>
-      <div class="field">
-        <label>Výkon FVE</label>
-        <input type="text" data-field="vykon" value="9,9 kWp">
-      </div>
-      <div class="field">
-        <label>Adresa</label>
-        <input type="text" data-field="objekt" value="Varnsdorf">
-      </div>
-      <div class="field">
-        <label>Odběratel</label>
-        <input type="text" data-field="odberatel" value="[Jméno / firma odběratele]">
-      </div>
-      <div class="field">
-        <label>Datum vystavení</label>
-        <input type="text" data-field="datum" value="9. 3. 2026">
-      </div>
-      <div class="field">
-        <label>Platnost nabídky do</label>
-        <input type="text" data-field="platnost" value="23. 3. 2026">
-      </div>
-    </div>
-  </div>
-
   <div class="supplier" data-save="supplier">
     <div>
       <div class="cap">Dodavatel</div>
       <div class="name" contenteditable="true">BF Technology s. r. o.</div>
-      <div class="line" contenteditable="true">IČO —</div>
-      <div class="line" contenteditable="true">[sídlo společnosti]</div>
+      <div class="line" contenteditable="true">IČO 17258529 · DIČ CZ17258529</div>
+      <div class="line" contenteditable="true">Obchodní 455/12, Děčín</div>
     </div>
     <div>
       <div class="cap">Kontakty</div>
       <div class="line"><span class="role">Smluvní:</span> <span contenteditable="true">PhDr. Jan Böhme</span></div>
       <div class="line" contenteditable="true">+420 776 111 100 · info@bftechnology.cz</div>
-      <div class="line" style="margin-top:6px"><span class="role">Technický:</span> <span contenteditable="true">[technický kontakt]</span></div>
+      <div class="line" style="margin-top:6px"><span class="role">Technický:</span> <span contenteditable="true">Petr Fencl</span></div>
       <div class="line" contenteditable="true">servis@bftechnology.cz</div>
     </div>
     <div>
@@ -906,8 +1779,9 @@
 
   <div class="banner"><div class="left">Použité technologie</div><div class="right"></div></div>
 
-  <div class="cards">
-    <div class="card">
+  <div class="cards" data-save="cards">
+    <div class="card card-panel">
+      <button class="del-card no-print" title="Odebrat kartu">✕</button>
       <div class="card-hdr">FV panely</div>
       <div class="brand-name" contenteditable="true">Trina Solar</div>
       <div class="brand-model" contenteditable="true">450 TOPCon</div>
@@ -923,7 +1797,8 @@
         <input type="file" accept="image/*">
       </div>
     </div>
-    <div class="card">
+    <div class="card card-stridac">
+      <button class="del-card no-print" title="Odebrat kartu">✕</button>
       <div class="card-hdr">Střídač</div>
       <div class="brand-name" contenteditable="true">Solinteg</div>
       <div class="brand-model" contenteditable="true">MHT-10K-25</div>
@@ -939,7 +1814,8 @@
         <input type="file" accept="image/*">
       </div>
     </div>
-    <div class="card">
+    <div class="card card-baterie">
+      <button class="del-card no-print" title="Odebrat kartu">✕</button>
       <div class="card-hdr">Baterie</div>
       <div class="brand-name" contenteditable="true">Dyness Tower</div>
       <div class="brand-model" contenteditable="true">T10 · 10 kWh</div>
@@ -955,7 +1831,8 @@
         <input type="file" accept="image/*">
       </div>
     </div>
-    <div class="card">
+    <div class="card card-wallbox">
+      <button class="del-card no-print" title="Odebrat kartu">✕</button>
       <div class="card-hdr">Wallbox</div>
       <div class="brand-name" contenteditable="true">Solinteg</div>
       <div class="brand-model" contenteditable="true">S11K-BS0</div>
@@ -971,10 +1848,15 @@
         <input type="file" accept="image/*">
       </div>
     </div>
-    <div class="card">
+    <div class="card card-konstrukce">
+      <button class="del-card no-print" title="Odebrat kartu">✕</button>
       <div class="card-hdr">Konstrukce</div>
-      <div class="brand-name" contenteditable="true">Střešní hák</div>
-      <div class="brand-model" contenteditable="true">hliník / nerez ocel</div>
+      <select class="brand-name brand-select" id="konstrukce-type-select" title="Vyber typ konstrukce — fotka se načte automaticky">
+        <option value="hak" selected>Střešní hák</option>
+        <option value="falc">Falcová příchytka</option>
+        <option value="zatez">Zátěžová konstrukce</option>
+      </select>
+      <div class="brand-model-spacer" aria-hidden="true"></div>
       <dl>
         <dt>Orientace</dt><dd contenteditable="true">libovolná</dd>
         <dt>Materiál</dt><dd contenteditable="true">hliník, nerez</dd>
@@ -984,6 +1866,23 @@
       </dl>
       <div class="product-photo photo-slot" data-photo="prod-5">
         <span class="placeholder">+ foto konstrukce</span>
+        <input type="file" accept="image/*">
+      </div>
+    </div>
+    <div class="card card-optimizer">
+      <button class="del-card no-print" title="Odebrat kartu">✕</button>
+      <div class="card-hdr">STOP tlačítko</div>
+      <div class="brand-name" contenteditable="true">Tigo TS4-A-2F</div>
+      <div class="brand-model-spacer" aria-hidden="true"></div>
+      <dl>
+        <dt>Počet kusů</dt><dd contenteditable="true">16 ks</dd>
+        <dt>Funkce</dt><dd contenteditable="true">Rychlé vypnutí (RSS)</dd>
+        <dt>Monitoring</dt><dd contenteditable="true">bez optimalizace</dd>
+        <dt>Záruka produkt</dt><dd contenteditable="true">25 let</dd>
+        <dt>&nbsp;</dt><dd>&nbsp;</dd>
+      </dl>
+      <div class="product-photo photo-slot" data-photo="prod-6">
+        <span class="placeholder">+ foto optimizéru</span>
         <input type="file" accept="image/*">
       </div>
     </div>
@@ -1073,22 +1972,23 @@
   </table>
 
   <div class="banner"><div class="left">Rozsah prací</div><div class="right"></div></div>
-  <div class="scope">
-    <div contenteditable="true">Projektová dokumentace úrovně DPS a DSP</div>
-    <div contenteditable="true">Zpracování a podání žádosti o dotaci NZÚ (SFŽP)</div>
-    <div contenteditable="true">Vyřízení připojení k distribuční síti</div>
-    <div contenteditable="true">Elektrorevize odběrného místa, FVE a elektromobility</div>
-    <div contenteditable="true">Doplnění povinných prvků v elektroměrovém rozvaděči</div>
-    <div contenteditable="true">Doplnění domovního rozvaděče pro funkci backup módu</div>
-    <div contenteditable="true">Osazení DC přepěťové ochrany pro každý string</div>
-    <div contenteditable="true">Osazení 1× AC FVE rozvaděče 72 modulů (BACKUP / GRID)</div>
-    <div contenteditable="true">Montáž FVE panelů a konstrukce</div>
-    <div contenteditable="true">Montáž a zprovoznění střídače a baterií</div>
-    <div contenteditable="true">Montáž a zprovoznění wallboxu (Power Boost, chytré měření)</div>
-    <div contenteditable="true">STOP tlačítko pro bezpečné vypnutí panelů (Tigo)</div>
-    <div contenteditable="true">Vytvoření přístupů do Cloud služeb</div>
-    <div contenteditable="true">Zajištěná technická podpora a servis</div>
+  <div class="scope" data-save="scope">
+    <div contenteditable="true">Projektová dokumentace úrovně DPS a DSP<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div contenteditable="true">Zpracování a podání žádosti o dotaci NZÚ (SFŽP)<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div contenteditable="true">Vyřízení připojení k distribuční síti<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div contenteditable="true">Elektrorevize odběrného místa, FVE a elektromobility<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div contenteditable="true">Doplnění povinných prvků v elektroměrovém rozvaděči<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div contenteditable="true">Doplnění domovního rozvaděče pro funkci backup módu<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div contenteditable="true">Osazení DC přepěťové ochrany pro každý string<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div contenteditable="true">Osazení 1× AC FVE rozvaděče 72 modulů (BACKUP / GRID)<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div contenteditable="true">Montáž FVE panelů a konstrukce<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div contenteditable="true">Montáž a zprovoznění střídače a baterií<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div contenteditable="true">Montáž a zprovoznění wallboxu (Power Boost, chytré měření)<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div contenteditable="true">STOP tlačítko pro bezpečné vypnutí panelů (Tigo)<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div contenteditable="true">Vytvoření přístupů do Cloud služeb<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
+    <div contenteditable="true">Zajištěná technická podpora a servis<button class="del-scope no-print" title="Odebrat položku">✕</button></div>
   </div>
+  <button class="add-scope no-print" type="button" onclick="addScopeItem()">+ Přidat položku</button>
 </section>
 
 <!-- =========================== PAGE 5 — PLATEBNÍ + SPOLUPRÁCE + FOOTER =========================== -->
@@ -1112,16 +2012,19 @@
     <div class="pay-card">
       <button class="del-card no-print" title="Odebrat kartu">✕</button>
       <div class="top"><span class="roman" contenteditable="true">I.</span> · <span class="pct" contenteditable="true">20 %</span></div>
+      <div class="pay-amount" data-pct="20">0 Kč</div>
       <div class="body" contenteditable="true">Po podpisu smlouvy bude uhrazena 1. záloha 20 % z celkové ceny díla.</div>
     </div>
     <div class="pay-card">
       <button class="del-card no-print" title="Odebrat kartu">✕</button>
       <div class="top"><span class="roman" contenteditable="true">II.</span> · <span class="pct" contenteditable="true">70 %</span></div>
+      <div class="pay-amount" data-pct="70">0 Kč</div>
       <div class="body" contenteditable="true">Po montáži FVE panelů a zprovoznění elektrárny (oživení střídače s omezením přetoků = FVE vyrábí pouze pro aktuální spotřebu RD) bude uhrazena 2. záloha 70 % ceny díla.</div>
     </div>
     <div class="pay-card">
       <button class="del-card no-print" title="Odebrat kartu">✕</button>
       <div class="top"><span class="roman" contenteditable="true">III.</span> · <span class="pct" contenteditable="true">10 %</span></div>
+      <div class="pay-amount" data-pct="10">0 Kč</div>
       <div class="body" contenteditable="true">Po ukončení PPP bude vystavena definitivní faktura na celé dílo — budou odečteny uhrazené zálohy a doúčtována zbývající částka 10 % z celkové ceny.</div>
     </div>
   </div>
@@ -1171,18 +2074,16 @@
       <div><span class="lbl">Web</span>www.bftechnology.cz</div>
       <div class="socials">
         <span class="lbl">Social</span>
-        <a href="#" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.instagram.com/bftechnology_sro/" target="_blank" rel="noopener">Instagram</a>
         <span class="dot">·</span>
-        <a href="#" target="_blank" rel="noopener">Facebook</a>
-        <span class="dot">·</span>
-        <a href="#" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://www.facebook.com/BFtechnologyCZ" target="_blank" rel="noopener">Facebook</a>
       </div>
     </div>
     <div class="address">
-      <div class="cap">Sídlo</div>
+      <div class="cap">Sídlo · IČO 17258529 · DIČ CZ17258529</div>
       <div class="name">BF Technology s. r. o.</div>
-      <div>[ulice a č. p.]</div>
-      <div>[PSČ a město]</div>
+      <div>Obchodní 455/12</div>
+      <div>405 02 Děčín</div>
     </div>
   </div>
 </section>
@@ -1193,18 +2094,529 @@
 
   // ---------- Two-way binding inputs <-> spans ----------
   function bindFields() {
-    document.querySelectorAll('input[data-field]').forEach(inp => {
+    document.querySelectorAll('input[data-field], textarea[data-field], select[data-field]').forEach(inp => {
       const key = inp.dataset.field;
       syncField(key, inp.value);
-      inp.addEventListener('input', e => syncField(key, e.target.value));
+      const evt = inp.tagName === 'SELECT' ? 'change' : 'input';
+      inp.addEventListener(evt, e => syncField(key, e.target.value));
     });
   }
   function syncField(key, value) {
-    // Update ALL elements with this data-field (spans, divs, <b>, …) — except inputs
+    // Update ALL elements with this data-field — sync between multiple inputs + textNodes
     document.querySelectorAll(`[data-field="${key}"]`).forEach(el => {
-      if (el.tagName === 'INPUT') return;
-      el.textContent = value;
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+        if (el.value !== value) el.value = value;
+      } else {
+        el.textContent = value;
+      }
     });
+    // Update draft title in form screen
+    if (key === 'cislo') {
+      const dt = document.getElementById('draft-title');
+      if (dt) dt.textContent = value;
+    }
+  }
+
+  // ---------- Persist manual-override checkbox states ----------
+  function saveManualFlags() {
+    const flags = {
+      cislo:    document.getElementById('cislo-manual')?.checked    || false,
+      datum:    document.getElementById('datum-manual')?.checked    || false,
+      platnost: document.getElementById('platnost-manual')?.checked || false,
+    };
+    try { localStorage.setItem(STORAGE_KEY + ':manual', JSON.stringify(flags)); } catch(e){}
+  }
+  function loadManualFlags() {
+    try {
+      const f = JSON.parse(localStorage.getItem(STORAGE_KEY + ':manual') || '{}');
+      const c = document.getElementById('cislo-manual');
+      const d = document.getElementById('datum-manual');
+      const p = document.getElementById('platnost-manual');
+      if (c) c.checked = !!f.cislo;
+      if (d) d.checked = !!f.datum;
+      if (p) p.checked = !!f.platnost;
+    } catch(e){}
+  }
+
+  // ---------- Czech date parsing + Platnost auto +30 days ----------
+  function parseCzechDate(str) {
+    if (!str) return null;
+    const m = String(str).trim().match(/^(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})$/);
+    if (!m) return null;
+    const d = parseInt(m[1], 10), mo = parseInt(m[2], 10), y = parseInt(m[3], 10);
+    const date = new Date(y, mo - 1, d);
+    if (date.getDate() !== d || date.getMonth() !== mo - 1 || date.getFullYear() !== y) return null;
+    return date;
+  }
+  function formatCzechDate(date) {
+    return `${date.getDate()}. ${date.getMonth() + 1}. ${date.getFullYear()}`;
+  }
+  function todayCzechDate() {
+    return formatCzechDate(new Date());
+  }
+  function bindDatumManual() {
+    const cb  = document.getElementById('datum-manual');
+    const inp = document.querySelector('input[data-field="datum"][data-form="1"]');
+    if (!cb || !inp) return;
+    const apply = () => {
+      if (cb.checked) {
+        inp.readOnly = false;
+        inp.classList.add('manual');
+      } else {
+        inp.readOnly = true;
+        inp.classList.remove('manual');
+        const today = todayCzechDate();
+        if (inp.value !== today) {
+          inp.value = today;
+          syncField('datum', today);
+        }
+        recalcPlatnost();
+      }
+      saveManualFlags();
+    };
+    cb.addEventListener('change', () => { apply(); if (cb.checked) { inp.focus(); inp.select(); } });
+    apply();
+  }
+  function recalcPlatnost() {
+    const cb = document.getElementById('platnost-manual');
+    if (cb && cb.checked) return; // manual override on — skip auto
+    const datumInp    = document.querySelector('input[data-field="datum"][data-form="1"]');
+    const platnostInp = document.querySelector('input[data-field="platnost"][data-form="1"]');
+    if (!datumInp || !platnostInp) return;
+    const d = parseCzechDate(datumInp.value);
+    if (!d) return;
+    d.setDate(d.getDate() + 30);
+    const next = formatCzechDate(d);
+    if (platnostInp.value !== next) {
+      platnostInp.value = next;
+      syncField('platnost', next);
+    }
+  }
+  function bindPlatnostManual() {
+    const cb  = document.getElementById('platnost-manual');
+    const inp = document.querySelector('input[data-field="platnost"][data-form="1"]');
+    if (!cb || !inp) return;
+    const apply = () => {
+      if (cb.checked) {
+        inp.readOnly = false;
+        inp.classList.add('manual');
+      } else {
+        inp.readOnly = true;
+        inp.classList.remove('manual');
+        recalcPlatnost();
+      }
+      saveManualFlags();
+    };
+    cb.addEventListener('change', () => { apply(); if (cb.checked) { inp.focus(); inp.select(); } });
+    apply();
+  }
+  function bindDatumRecalc() {
+    const datumInp = document.querySelector('input[data-field="datum"][data-form="1"]');
+    if (!datumInp) return;
+    datumInp.addEventListener('input', recalcPlatnost);
+  }
+
+  // ---------- Page numbering — auto from .page count ----------
+  function applyPageNumbers() {
+    const pages = document.querySelectorAll('section.page');
+    const total = pages.length;
+    pages.forEach((p, i) => {
+      p.querySelector('.page-num')?.remove();
+      const badge = document.createElement('span');
+      badge.className = 'page-num';
+      badge.textContent = `${i + 1} / ${total}`;
+      p.appendChild(badge);
+    });
+  }
+
+  // ---------- Rozsah prací — add / remove items ----------
+  function bindScope() {
+    document.querySelectorAll('.scope').forEach(container => {
+      if (container.dataset.bound) return;
+      container.dataset.bound = '1';
+      container.addEventListener('click', (e) => {
+        if (e.target.classList && e.target.classList.contains('del-scope')) {
+          e.stopPropagation();
+          const item = e.target.closest('div[contenteditable]');
+          if (item) {
+            item.remove();
+            if (typeof saveState === 'function') saveState();
+          }
+        }
+      });
+    });
+  }
+  window.addScopeItem = function() {
+    const container = document.querySelector('.scope');
+    if (!container) return;
+    const item = document.createElement('div');
+    item.contentEditable = 'true';
+    item.innerHTML = 'Nová položka<button class="del-scope no-print" title="Odebrat položku">✕</button>';
+    container.appendChild(item);
+    // Focus the new item so user can type immediately
+    item.focus();
+    const range = document.createRange();
+    const sel = window.getSelection();
+    range.selectNodeContents(item);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+    if (typeof saveState === 'function') saveState();
+  };
+
+  // ---------- Technology cards — editable dt + per-row delete ----------
+  function makeDtEditable() {
+    document.querySelectorAll('.card dl dt').forEach(dt => {
+      if (!dt.hasAttribute('contenteditable')) dt.setAttribute('contenteditable', 'true');
+    });
+  }
+  function injectDlDeleteButtons() {
+    document.querySelectorAll('.card dl dd').forEach(dd => {
+      if (dd.querySelector('.del-dl')) return;
+      // Skip "empty" placeholder dds (containing only &nbsp; / whitespace)
+      const txt = dd.textContent.replace(/ /g, '').trim();
+      if (!txt) return;
+      const btn = document.createElement('button');
+      btn.className = 'del-dl no-print';
+      btn.type = 'button';
+      btn.title = 'Odebrat řádek (smaže popis i hodnotu)';
+      btn.textContent = '✕';
+      dd.appendChild(btn);
+    });
+  }
+  function bindDlRows() {
+    document.querySelectorAll('.card dl').forEach(dl => {
+      if (dl.dataset.bound) return;
+      dl.dataset.bound = '1';
+      dl.addEventListener('click', e => {
+        if (!e.target.classList || !e.target.classList.contains('del-dl')) return;
+        e.stopPropagation();
+        const dd = e.target.closest('dd');
+        if (!dd) return;
+        const dt = dd.previousElementSibling;
+        if (dt && dt.tagName === 'DT') dt.remove();
+        dd.remove();
+        if (typeof saveState === 'function') saveState();
+      });
+    });
+  }
+
+  // ---------- Remove technology cards (page 2) ----------
+  function bindCards() {
+    document.querySelectorAll('.cards').forEach(container => {
+      if (container.dataset.bound) return;
+      container.dataset.bound = '1';
+      container.addEventListener('click', (e) => {
+        if (e.target.classList && e.target.classList.contains('del-card')) {
+          const card = e.target.closest('.card');
+          if (card && confirm('Odebrat kartu „' + (card.querySelector('.card-hdr')?.textContent || 'technologie') + '"?')) {
+            card.remove();
+            if (typeof saveState === 'function') saveState();
+          }
+        }
+      });
+    });
+  }
+
+  // ---------- Konstrukce type — select + auto-photo + model auto-text ----------
+  const KONSTRUKCE_TYPES = {
+    hak:   { name: 'Střešní hák',          model: 'hliník / nerez ocel',           file: 'hak.png',
+             dl: { 'Orientace': 'libovolná', 'Materiál': 'hliník, nerez', 'Vhodné pro': 'šikmé střechy (taška, šindel)', 'Záruka': '10 let' } },
+    falc:  { name: 'Falcová příchytka',    model: 'nerez ocel · falcové střechy',  file: 'falc.png',
+             dl: { 'Orientace': 'libovolná', 'Materiál': 'nerez ocel', 'Vhodné pro': 'falcované plechové střechy', 'Záruka': '10 let' } },
+    zatez: { name: 'Zátěžová konstrukce',  model: 'pozink ocel · ploché střechy',  file: 'zatez.png',
+             dl: { 'Orientace': 'jih / V-Z', 'Materiál': 'pozink ocel + betonové bloky', 'Vhodné pro': 'ploché střechy (PVC, asfalt, kačírek)', 'Záruka': '10 let' } },
+  };
+
+  async function applyKonstrukceType(sel) {
+    if (!sel) return;
+    const t = KONSTRUKCE_TYPES[sel.value];
+    if (!t) return;
+    const card = sel.closest('.card');
+    if (!card) return;
+
+    // Vyčisti starý brand-model z localStorage HTML restore (uživatel ho už nechce vidět)
+    const oldBrandModel = card.querySelector('.brand-model');
+    if (oldBrandModel) oldBrandModel.remove();
+    if (!card.querySelector('.brand-model-spacer')) {
+      const spacer = document.createElement('div');
+      spacer.className = 'brand-model-spacer';
+      spacer.setAttribute('aria-hidden', 'true');
+      const select = card.querySelector('.brand-select');
+      if (select && select.nextSibling) select.parentNode.insertBefore(spacer, select.nextSibling);
+      else card.appendChild(spacer);
+    }
+
+    // Update dl entries that we know about — only the first 4 (rest left empty)
+    const dts = card.querySelectorAll('dl dt');
+    const dds = card.querySelectorAll('dl dd');
+    const entries = Object.entries(t.dl);
+    entries.forEach(([k, v], i) => {
+      if (dts[i]) dts[i].textContent = k;
+      if (dds[i]) dds[i].textContent = v;
+    });
+
+    // Try to load the matching photo
+    const slot = card.querySelector('.product-photo');
+    const src = `img/${t.file}`;
+    const exists = await preloadImg(src);
+    if (exists && slot) setPhoto(slot, src);
+
+    // Persist the chosen type
+    try { localStorage.setItem(STORAGE_KEY + ':konstrukce', sel.value); } catch(e){}
+    if (typeof saveState === 'function') saveState();
+  }
+
+  function bindKonstrukceType() {
+    const sel = document.getElementById('konstrukce-type-select');
+    if (!sel) return;
+    sel.addEventListener('change', () => applyKonstrukceType(sel));
+    // Restore saved value
+    const saved = localStorage.getItem(STORAGE_KEY + ':konstrukce');
+    if (saved && KONSTRUKCE_TYPES[saved]) {
+      sel.value = saved;
+      applyKonstrukceType(sel);
+    }
+  }
+
+  // ---------- Auto-load images from /img/ ----------
+  // Each entry: filename in /img/ + regexes that match the card's category (card-hdr)
+  // and brand (brand-name + brand-model). BOTH regexes must match for an entry to fire.
+  // Edit/extend this manifest when new images land in /img/.
+  const IMG_MANIFEST = [
+    // FV panely
+    { file: 'trina.png',         category: /panel|fv\s*panely|fotovolt|solárn/i, brand: /trina/i },
+    // Střídače
+    { file: '10K-25.jpeg',       category: /střídač|stridac|inverter/i,           brand: /solinteg|10k|mht/i },
+    // Baterie — specifičtější značky první (first-match-wins)
+    { file: 'pylontech.png',     category: /baterie|battery|akumul/i,             brand: /pylontech/i },
+    { file: 'dyness_t.webp',     category: /baterie|battery|akumul/i,             brand: /dyness|tower|t10/i },
+    // Wallbox
+    { file: 'solinteg_s11.png',  category: /wallbox|nabíječ|nabijec|charger/i,    brand: /solinteg|s11|s11k/i },
+    // Optimizéry Tigo — varianty TS4-A-2F / TS4-A-O / TS4-X-O (specifické první)
+    { file: 'tigo_ts4_a_2f.png', category: /optimiz|tigo/i,                       brand: /ts4-?a-?2f|2f/i },
+    { file: 'tigo_ts4_x_o.png',  category: /optimiz|tigo/i,                       brand: /ts4-?x-?o|x-?o/i },
+    { file: 'tigo_ts4_a_o.png',  category: /optimiz|tigo/i,                       brand: /ts4-?a-?o|tigo/i },
+    // Konstrukce — střešní hák / falcová příchytka / zátěžová konstrukce
+    { file: 'hak.png',           category: /konstrukce|nosná|montáž/i,            brand: /hák|hak|střešn|šikm/i },
+    { file: 'falc.png',          category: /konstrukce|nosná|montáž/i,            brand: /falc|příchyt|plech/i },
+    { file: 'zatez.png',         category: /konstrukce|nosná|montáž/i,            brand: /zátěž|zatez|ballast|ploch/i },
+    // Fallback pro konstrukci pokud uživatel nepíše nic specifického — vezme hák
+    { file: 'hak.png',           category: /konstrukce/i,                         brand: /.*/  },
+  ];
+
+  function preloadImg(src) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = src;
+    });
+  }
+
+  window.autoloadImages = async function() {
+    const cards = document.querySelectorAll('.card');
+    let loaded = 0, skipped = 0, missing = 0;
+    const usedFiles = [];
+    for (const card of cards) {
+      const cat = (card.querySelector('.card-hdr')?.textContent || '').trim();
+      const brandEl = card.querySelector('.brand-name');
+      let brand = '';
+      if (brandEl) {
+        brand = brandEl.tagName === 'SELECT'
+          ? (brandEl.options[brandEl.selectedIndex]?.text || '')
+          : brandEl.textContent;
+      }
+      brand = brand.trim();
+      const model = (card.querySelector('.brand-model')?.textContent || '').trim();
+      const slot  = card.querySelector('.product-photo');
+      if (!slot) continue;
+
+      const brandHay = `${brand} ${model}`;
+      let match = null;
+      for (const entry of IMG_MANIFEST) {
+        if (entry.category.test(cat) && entry.brand.test(brandHay)) {
+          match = entry; break;
+        }
+      }
+      if (!match) { skipped++; continue; }
+
+      const src = `img/${match.file}`;
+      const exists = await preloadImg(src);
+      if (!exists) { missing++; continue; }
+
+      setPhoto(slot, src);
+      usedFiles.push(match.file);
+      loaded++;
+    }
+    if (typeof saveState === 'function') saveState();
+    const parts = [`📷 Načteno ${loaded} fotek`];
+    if (skipped) parts.push(`${skipped} bez shody`);
+    if (missing) parts.push(`${missing} chybí v /img/`);
+    flashStatus(parts.join(' · '));
+    if (usedFiles.length) console.log('Autoload images — použito:', usedFiles);
+  };
+
+  // ---------- Kalkulace č. — 8-digit generator + manual toggle ----------
+  function generateCisloNumber() {
+    // 8 digits: 10000000 – 99999999
+    return String(Math.floor(10000000 + Math.random() * 90000000));
+  }
+  window.generateCislo = function() {
+    const inp = document.querySelector('input[data-field="cislo"][data-form="1"]');
+    if (!inp) return;
+    const n = generateCisloNumber();
+    inp.value = n;
+    syncField('cislo', n);
+    if (typeof saveState === 'function') saveState();
+    flashStatus(`🎲 Vygenerováno: ${n}`);
+  };
+  function bindCisloManual() {
+    const cb = document.getElementById('cislo-manual');
+    const inp = document.querySelector('input[data-field="cislo"][data-form="1"]');
+    const btn = document.getElementById('cislo-gen-btn');
+    if (!cb || !inp) return;
+    const apply = () => {
+      if (cb.checked) {
+        inp.readOnly = false;
+        inp.classList.add('manual');
+        if (btn) btn.style.display = 'none';
+      } else {
+        inp.readOnly = true;
+        inp.classList.remove('manual');
+        if (btn) btn.style.display = '';
+      }
+      saveManualFlags();
+    };
+    cb.addEventListener('change', () => { apply(); if (cb.checked) { inp.focus(); inp.select(); } });
+    apply();
+  }
+
+  // ---------- Scroll helpers ----------
+  window.scrollToForm = function() {
+    const el = document.getElementById('form-screen');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  window.scrollToPreview = function() {
+    const el = document.querySelector('section.page');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  window.scrollToKalk = function() {
+    const el = document.getElementById('kalkulator-screen');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  // ---------- Save / Load JSON file (for sharing drafts) ----------
+  function collectState() {
+    const state = { version: 1, savedAt: new Date().toISOString(), inputs: {}, html: {}, photos: {} };
+    document.querySelectorAll('input[data-field][data-form="1"], textarea[data-field][data-form="1"], select[data-field][data-form="1"]').forEach(inp => {
+      state.inputs[inp.dataset.field] = inp.value;
+    });
+    document.querySelectorAll('[data-save]').forEach(el => {
+      state.html[el.dataset.save] = el.innerHTML;
+    });
+    document.querySelectorAll('.photo-slot[data-photo]').forEach(slot => {
+      const img = slot.querySelector('img');
+      if (img && img.src) state.photos[slot.dataset.photo] = img.src;
+    });
+    return state;
+  }
+
+  window.downloadJSON = async function() {
+    const state = collectState();
+    const cislo = (state.inputs.cislo || 'nabidka').replace(/[^a-zA-Z0-9_-]/g, '_');
+    const fname = `BFT_${cislo}.json`;
+    const data = JSON.stringify(state, null, 2);
+
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: fname,
+          types: [{ description: 'BFT nabídka (JSON)', accept: { 'application/json': ['.json'] } }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(data);
+        await writable.close();
+        flashStatus(`💾 Uloženo jako: ${handle.name}`);
+        return;
+      } catch (e) {
+        if (e && e.name === 'AbortError') return;
+        console.warn('showSaveFilePicker failed, falling back to download:', e);
+      }
+    }
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = fname;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+    flashStatus(`💾 Uloženo do Downloads: ${fname}`);
+  };
+
+  window.loadFromFile = async function() {
+    if (window.showOpenFilePicker) {
+      try {
+        const [handle] = await window.showOpenFilePicker({
+          types: [{ description: 'BFT nabídka (JSON)', accept: { 'application/json': ['.json'] } }],
+          multiple: false
+        });
+        const file = await handle.getFile();
+        uploadJSON(file);
+        return;
+      } catch (e) {
+        if (e && e.name === 'AbortError') return;
+        console.warn('showOpenFilePicker failed, falling back to <input>:', e);
+      }
+    }
+    document.getElementById('load-json-input').click();
+  };
+
+  window.uploadJSON = function(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const state = JSON.parse(e.target.result);
+        if (state.inputs) {
+          Object.entries(state.inputs).forEach(([k, v]) => {
+            const inp = document.querySelector(`input[data-field="${k}"][data-form="1"], select[data-field="${k}"][data-form="1"], textarea[data-field="${k}"][data-form="1"]`)
+              || document.querySelector(`input[data-field="${k}"], select[data-field="${k}"], textarea[data-field="${k}"]`);
+            if (inp) { inp.value = v; }
+            syncField(k, v);
+          });
+        }
+        if (state.html) {
+          Object.entries(state.html).forEach(([k, v]) => {
+            const el = document.querySelector(`[data-save="${k}"]`);
+            if (el) el.innerHTML = v;
+          });
+        }
+        if (state.photos) {
+          Object.entries(state.photos).forEach(([k, src]) => {
+            const slot = document.querySelector(`.photo-slot[data-photo="${k}"]`);
+            if (slot) setPhoto(slot, src);
+          });
+        }
+        document.querySelectorAll('table.items tbody tr').forEach(addDeleteRowButton);
+        bindPhotoSlots();
+        saveState();
+        flashStatus(`📂 Načteno: ${file.name}`);
+      } catch (err) {
+        alert('Soubor není platná BFT nabídka (JSON):\n' + err.message);
+      }
+      const inp = document.getElementById('load-json-input');
+      if (inp) inp.value = '';
+    };
+    reader.readAsText(file);
+  };
+
+  function flashStatus(msg) {
+    const el = document.getElementById('save-status');
+    if (!el) return;
+    const orig = el.textContent;
+    el.textContent = msg;
+    el.style.color = '#8BB855';
+    setTimeout(() => { el.textContent = orig; el.style.color = ''; }, 2500);
   }
 
   // ---------- Click-to-upload photo slots ----------
@@ -1309,7 +2721,7 @@
   // ---------- Persist to localStorage ----------
   function saveState() {
     const state = { inputs: {}, html: {}, photos: {} };
-    document.querySelectorAll('input[data-field]').forEach(inp => {
+    document.querySelectorAll('input[data-field][data-form="1"], textarea[data-field][data-form="1"], select[data-field][data-form="1"]').forEach(inp => {
       state.inputs[inp.dataset.field] = inp.value;
     });
     document.querySelectorAll('[data-save]').forEach(el => {
@@ -1317,8 +2729,12 @@
     });
     document.querySelectorAll('.photo-slot[data-photo]').forEach(slot => {
       const img = slot.querySelector('img');
-      if (img && img.src.startsWith('data:')) {
-        state.photos[slot.dataset.photo] = img.src;
+      if (!img) return;
+      // Persist either user-uploaded data URLs OR relative paths from /img/ autoload.
+      // Skip the static HTML defaults (e.g. assets/title-photo.jpg) so we don't bloat storage.
+      const attr = img.getAttribute('src') || '';
+      if (attr.startsWith('data:') || attr.startsWith('img/')) {
+        state.photos[slot.dataset.photo] = attr;
       }
     });
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
@@ -1331,7 +2747,8 @@
       const state = JSON.parse(raw);
       if (state.inputs) {
         Object.entries(state.inputs).forEach(([k, v]) => {
-          const inp = document.querySelector(`input[data-field="${k}"]`);
+          const inp = document.querySelector(`input[data-field="${k}"][data-form="1"], select[data-field="${k}"][data-form="1"], textarea[data-field="${k}"][data-form="1"]`)
+            || document.querySelector(`input[data-field="${k}"], select[data-field="${k}"], textarea[data-field="${k}"]`);
           if (inp) { inp.value = v; syncField(k, v); }
         });
       }
@@ -1361,6 +2778,275 @@
     location.reload();
   };
 
+  // ---------- Tigo optimizer model — propsání z kalkulátoru do karty na str. 3 ----------
+  const TIGO_MODELS = {
+    'none':     { model: '—',        file: null,                desc: '',                                    funkce: '—',                    monitoring: '—', hideCard: true },
+    'TS4-A-2F': { model: 'TS4-A-2F', file: 'tigo_ts4_a_2f.png', desc: 'Rapid shutdown 2 panelů',             funkce: 'Rychlé vypnutí (RSS)', monitoring: 'bez optimalizace' },
+    'TS4-A-O':  { model: 'TS4-A-O',  file: 'tigo_ts4_a_o.png',  desc: 'Optimalizace na úrovni panelu + RSS', funkce: 'Optimalizace + RSS',   monitoring: 'na úrovni panelu' },
+    'TS4-X-O':  { model: 'TS4-X-O',  file: 'tigo_ts4_x_o.png',  desc: 'X-series optimalizace + RSS',         funkce: 'Optimalizace X + RSS', monitoring: 'na úrovni panelu' },
+  };
+
+  async function applyOptimizerModel(value) {
+    const card = document.querySelector('.card.card-optimizer');
+    if (!card) return;
+    const def = TIGO_MODELS[value];
+    if (!def) return;
+
+    // "není" — skryj kartu úplně
+    if (def.hideCard) {
+      card.classList.add('card-hidden');
+      if (typeof saveState === 'function') saveState();
+      return;
+    }
+    card.classList.remove('card-hidden');
+
+    // Remove leftover brand-model from old HTML (localStorage restore) — držíme spacer
+    const oldBrandModel = card.querySelector('.brand-model');
+    if (oldBrandModel) oldBrandModel.remove();
+    if (!card.querySelector('.brand-model-spacer')) {
+      const spacer = document.createElement('div');
+      spacer.className = 'brand-model-spacer';
+      spacer.setAttribute('aria-hidden', 'true');
+      const brandName = card.querySelector('.brand-name');
+      if (brandName && brandName.nextSibling) brandName.parentNode.insertBefore(spacer, brandName.nextSibling);
+      else card.appendChild(spacer);
+    }
+
+    // brand-name = manufacturer + model code
+    const brandName = card.querySelector('.brand-name');
+    if (brandName) brandName.textContent = `Tigo ${def.model}`;
+
+    // Update dl rows by label
+    card.querySelectorAll('dl dt').forEach(dt => {
+      const t = dt.textContent.trim().toLowerCase();
+      const dd = dt.nextElementSibling;
+      if (!dd || dd.tagName !== 'DD') return;
+      if (t.startsWith('funkce'))          dd.textContent = def.funkce;
+      else if (t.startsWith('monitoring')) dd.textContent = def.monitoring;
+      else if (t.startsWith('model'))      dd.textContent = def.model;
+    });
+
+    // Load matching photo
+    const slot = card.querySelector('.product-photo');
+    if (slot && def.file) {
+      const src = `img/${def.file}`;
+      const exists = await preloadImg(src);
+      if (exists) setPhoto(slot, src);
+    }
+    if (typeof saveState === 'function') saveState();
+  }
+
+  function bindOptimizerSelect() {
+    const sel = document.querySelector('select[data-kalk-optimizer]');
+    if (!sel) return;
+    sel.addEventListener('change', () => applyOptimizerModel(sel.value));
+    // Apply on init too (so a saved/default value lands the right photo + text)
+    applyOptimizerModel(sel.value);
+  }
+
+  // ---------- KALKULÁTOR — vnitřní výpočty a propsání do nabídky ----------
+  function getDph() {
+    const sel = document.querySelector('select[data-field="dph"][data-form="1"]');
+    return sel ? (parseFloat(sel.value) || 0) : 12;
+  }
+  function dphMult() { return 1 + getDph() / 100; }
+  function fmtKc(n) {
+    const v = Math.round(n);
+    const formatted = Math.abs(v).toLocaleString('cs-CZ').replace(/ /g, ' ').replace(/,/g, ' ');
+    return (v < 0 ? '−' : '') + formatted + ' Kč';
+  }
+  function num(el) {
+    if (!el) return 0;
+    const v = parseFloat(String(el.value).replace(',', '.'));
+    return isNaN(v) ? 0 : v;
+  }
+  function sumCatBez(cat) {
+    const t = document.querySelector(`[data-kalk-table="${cat}"]`);
+    if (!t) return 0;
+    let s = 0;
+    t.querySelectorAll('[data-kalk-bez]').forEach(inp => s += num(inp));
+    return s;
+  }
+
+  function recalcKalk() {
+    if (!document.getElementById('kalkulator-screen')) return;
+    const mult = dphMult();
+
+    // Per-row vč DPH + per-category total (náklady)
+    document.querySelectorAll('[data-kalk-table]').forEach(t => {
+      const cat = t.dataset.kalkTable;
+      let bezSum = 0;
+      t.querySelectorAll('tbody tr').forEach(row => {
+        const bez = num(row.querySelector('[data-kalk-bez]'));
+        const vcCell = row.querySelector('[data-kalk-vc]');
+        if (vcCell) vcCell.textContent = fmtKc(bez * mult);
+        bezSum += bez;
+      });
+      const cBez = document.querySelector(`[data-kalk-cat-bez="${cat}"]`);
+      const cVc  = document.querySelector(`[data-kalk-cat-vc="${cat}"]`);
+      if (cBez) cBez.textContent = fmtKc(bezSum);
+      if (cVc)  cVc.textContent  = fmtKc(bezSum * mult);
+    });
+
+    // Zákazník – per kategorie
+    const techZakVc    = num(document.getElementById('kalk-tech-zak'));
+    const konstrZakVc  = num(document.getElementById('kalk-konstr-zak'));
+    const techZakBez   = techZakVc   / mult;
+    const konstrZakBez = konstrZakVc / mult;
+    document.getElementById('kalk-tech-zak-bez').textContent   = fmtKc(techZakBez);
+    document.getElementById('kalk-konstr-zak-bez').textContent = fmtKc(konstrZakBez);
+
+    // Práce — uživatel zadává bez DPH
+    const praceBez = num(document.getElementById('kalk-prace-bez'));
+    const praceVc  = praceBez * mult;
+    document.getElementById('kalk-prace-vc').textContent = fmtKc(praceVc);
+
+    // Sleva — uživatel zadává vč. DPH
+    const slevaVc  = num(document.getElementById('kalk-sleva-vc'));
+    const slevaBez = slevaVc / mult;
+    document.getElementById('kalk-sleva-bez').textContent = fmtKc(slevaBez);
+
+    // Dotace
+    const dotace = num(document.getElementById('kalk-dotace'));
+
+    // Souhrn pro zákazníka
+    const matBez = techZakBez + konstrZakBez;
+    const matVc  = techZakVc  + konstrZakVc;
+    document.getElementById('kalk-mat-bez').textContent = fmtKc(matBez);
+    document.getElementById('kalk-mat-vc').textContent  = fmtKc(matVc);
+    document.getElementById('kalk-prace-souhrn-bez').textContent = fmtKc(praceBez);
+    document.getElementById('kalk-prace-souhrn-vc').textContent  = fmtKc(praceVc);
+    document.getElementById('kalk-sleva-souhrn-bez').textContent = fmtKc(-slevaBez);
+    document.getElementById('kalk-sleva-souhrn-vc').textContent  = fmtKc(-slevaVc);
+
+    const faktBez = matBez + praceBez - slevaBez;
+    const faktVc  = matVc  + praceVc  - slevaVc;
+    document.getElementById('kalk-fakt-bez').textContent = fmtKc(faktBez);
+    document.getElementById('kalk-fakt-vc').textContent  = fmtKc(faktVc);
+    document.getElementById('kalk-dotace-display').textContent = fmtKc(-dotace);
+
+    const vyslednaVc = faktVc - dotace;
+    document.getElementById('kalk-vysledna').textContent = fmtKc(vyslednaVc);
+
+    // Marže
+    const matNaklady = sumCatBez('tech') + sumCatBez('konstr');
+    const marzeBez   = faktBez - matNaklady;
+    document.getElementById('kalk-marze').textContent = fmtKc(marzeBez);
+    const bfa = num(document.getElementById('kalk-bfa'));
+    const revize = num(document.getElementById('kalk-revize'));
+    const provozni = bfa + revize;
+    document.getElementById('kalk-naklady-total').textContent = fmtKc(provozni);
+    const cistyZisk = marzeBez - provozni;
+    document.getElementById('kalk-cisty-zisk').textContent = fmtKc(cistyZisk);
+
+    // Hero summary
+    document.getElementById('kalk-hero-total').textContent = fmtKc(vyslednaVc);
+    document.getElementById('kalk-hero-marze').textContent = fmtKc(marzeBez);
+    document.getElementById('kalk-hero-zisk').textContent  = fmtKc(cistyZisk);
+
+    // Auto-propagate
+    propagateKalkToOffer({
+      techZakVc, konstrZakVc, praceVc, slevaVc, dotace, faktVc, vyslednaVc,
+      techZakBez, konstrZakBez, praceBez, slevaBez, faktBez,
+    });
+
+    // Persist
+    saveKalkState();
+  }
+
+  // ---------- Propsání kalkulátoru do veřejné nabídky ----------
+  function setPriceCell(row, kc) {
+    if (!row) return;
+    const cell = row.querySelector('.price');
+    if (cell) cell.textContent = kc;
+  }
+  function setFooterPriceCell(row, kc) {
+    if (!row) return;
+    const cell = row.querySelector('td:last-child');
+    if (cell) cell.textContent = kc;
+  }
+
+  window.propagateKalkToOffer = function(data) {
+    if (!data) return;
+    // Page 4 — table data-table="opt" — Souhrn nákladů + dotace + sleva
+    const optTbody = document.querySelector('table[data-table="opt"] tbody');
+    if (optTbody) {
+      const rows = optTbody.querySelectorAll('tr');
+      setPriceCell(rows[0], fmtKc(data.techZakVc));    // Technologie FVE
+      setPriceCell(rows[1], fmtKc(data.konstrZakVc));  // Konstrukce + elektromateriál
+      setPriceCell(rows[2], fmtKc(data.praceVc));      // Práce, montáž, doprava
+      setPriceCell(rows[3], fmtKc(data.dotace));       // Dotace
+      setPriceCell(rows[4], fmtKc(-data.slevaVc));     // Poskytnutá sleva
+    }
+    const optTfoot = document.querySelector('table[data-table="opt"] tfoot');
+    if (optTfoot) {
+      const trs = optTfoot.querySelectorAll('tr');
+      setFooterPriceCell(trs[0], fmtKc(data.faktVc));      // Celková fakturační cena
+      setFooterPriceCell(trs[1], fmtKc(data.vyslednaVc));  // Celková cena po slevě a dotaci
+    }
+    // Page 3 — main pricing table footer
+    const mainTfoot = document.querySelector('table[data-table="main"] tfoot');
+    if (mainTfoot) {
+      const trs = mainTfoot.querySelectorAll('tr');
+      setFooterPriceCell(trs[0], fmtKc(data.faktBez));   // bez DPH
+      setFooterPriceCell(trs[1], fmtKc(data.faktVc));    // s DPH
+    }
+    // Page 5 — payment cards (recompute amounts shown next to %)
+    document.querySelectorAll('.pay-amount').forEach(el => {
+      const pct = parseFloat(el.dataset.pct) || 0;
+      el.textContent = fmtKc(data.vyslednaVc * pct / 100);
+    });
+  };
+
+  function bindKalkInputs() {
+    const root = document.getElementById('kalkulator-screen');
+    if (!root) return;
+    root.addEventListener('input', recalcKalk);
+    root.addEventListener('change', recalcKalk);
+    // DPH change in form-screen also recalculates
+    const dphSel = document.querySelector('select[data-field="dph"][data-form="1"]');
+    if (dphSel) dphSel.addEventListener('change', recalcKalk);
+  }
+
+  // ---------- Persist kalkulátor inputs separately ----------
+  function saveKalkState() {
+    const root = document.getElementById('kalkulator-screen');
+    if (!root) return;
+    const state = { byId: {}, tables: {} };
+    root.querySelectorAll('input[id^="kalk-"]').forEach(el => {
+      state.byId[el.id] = el.value;
+    });
+    root.querySelectorAll('[data-kalk-table]').forEach(t => {
+      const rows = [];
+      t.querySelectorAll('tbody tr').forEach(r => {
+        rows.push([...r.querySelectorAll('input, select')].map(i => i.value));
+      });
+      state.tables[t.dataset.kalkTable] = rows;
+    });
+    try { localStorage.setItem(STORAGE_KEY + ':kalk', JSON.stringify(state)); } catch(e){}
+  }
+  function loadKalkState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY + ':kalk');
+      if (!raw) return;
+      const state = JSON.parse(raw);
+      Object.entries(state.byId || {}).forEach(([id, v]) => {
+        const el = document.getElementById(id);
+        if (el) el.value = v;
+      });
+      Object.entries(state.tables || {}).forEach(([cat, rows]) => {
+        const t = document.querySelector(`[data-kalk-table="${cat}"]`);
+        if (!t) return;
+        const trRows = t.querySelectorAll('tbody tr');
+        rows.forEach((vals, i) => {
+          if (!trRows[i]) return;
+          const inputs = trRows[i].querySelectorAll('input, select');
+          vals.forEach((v, j) => { if (inputs[j] != null) inputs[j].value = v; });
+        });
+      });
+    } catch(e){}
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     bindFields();
     bindPhotoSlots();
@@ -1368,7 +3054,53 @@
     bindPayCards();
     bindSteps();
     loadState();
+    loadManualFlags();
+    loadKalkState();
+    bindCards();
+    bindScope();
+    makeDtEditable();
+    injectDlDeleteButtons();
+    bindDlRows();
+    bindCisloManual();
+    bindKonstrukceType();
+    bindDatumManual();
+    bindPlatnostManual();
+    bindDatumRecalc();
+    bindKalkInputs();
+    bindOptimizerSelect();
+    recalcKalk();
+    applyPageNumbers();
+
+    // Auto-generate Kalkulace č. on first run if still empty (no saved value)
+    const cisloInp = document.querySelector('input[data-field="cislo"][data-form="1"]');
+    if (cisloInp && !cisloInp.value.trim()) {
+      const n = generateCisloNumber();
+      cisloInp.value = n;
+      syncField('cislo', n);
+      saveState();
+    }
+
     document.addEventListener('input', saveState);
+    document.addEventListener('change', saveState); // covers <select>
+
+    // Hidden <input type=file> fallback for loadFromFile()
+    const loadInp = document.getElementById('load-json-input');
+    if (loadInp) {
+      loadInp.addEventListener('change', e => {
+        const f = e.target.files && e.target.files[0];
+        if (f) uploadJSON(f);
+      });
+    }
+
+    // Auto-saved-at indicator
+    const savedAt = document.getElementById('draft-saved-at');
+    if (savedAt) {
+      const update = () => {
+        savedAt.textContent = '— uloženo ' + new Date().toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
+      };
+      document.addEventListener('input', update);
+      document.addEventListener('change', update);
+    }
   });
 })();
 </script>
